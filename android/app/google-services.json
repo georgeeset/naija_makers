@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "162995696177",
+    "firebase_url": "https://naijamakers-66647.firebaseio.com",
+    "project_id": "naijamakers-66647",
+    "storage_bucket": "naijamakers-66647.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:162995696177:android:01267f08d5b3264e5adb10",
+        "android_client_info": {
+          "package_name": "com.flexautomation.naija_makers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "162995696177-5m6ep1iahaqqetlonvoqq2pjg2mah5qa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flexautomation.naija_makers",
+            "certificate_hash": "7472c3aa37c197e40924324136391e41193d3c63"
+          }
+        },
+        {
+          "client_id": "162995696177-3cb8nhpo8ncnu8i5puac7n8jk4pi1sga.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoM6sSQrXNbn-Hh2vQCmCoFwlzAYwJ1WA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "162995696177-3cb8nhpo8ncnu8i5puac7n8jk4pi1sga.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
