@@ -2,6 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:naija_makers/assets/data/user_type.dart';
+import 'package:naija_makers/providers/user.dart';
+import 'package:provider/provider.dart';
 
 import '../widgets/signup_widgets/signup_fields.dart';
 import '../assets/data/signup_data.dart';
@@ -27,7 +30,8 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
   @override
   Widget build(BuildContext context) {
     final MediaQueryData mediaQueryData = MediaQuery.of(context);
-
+    final profile=Provider.of<ProfileProvider>(context,listen: false);
+    final List<Map<String,dynamic>>formFields=profile.userProfile.userType==UserType.maker? MakerSignupData.signupData :UserSignupData.signupData;
     return GestureDetector(
       onTap: (){
         FocusScopeNode currentFocus=FocusScope.of(context);
@@ -44,9 +48,9 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
             absorbing: _inProcess,
                     child: PageView.builder(
               controller: pageController,
-              itemCount: MakerSignupData.signupData.length,//UserSignupData.signupData.length,
+              itemCount: formFields.length,//profile.userProfile.userType==UserType.maker? MakerSignupData.signupData.length:UserSignupData.signupData.length,
               itemBuilder: (context,int index){
-                return SignupFields(switchPage,getImage,_selectedFile ,MakerSignupData.signupData[index]);
+                return SignupFields(switchPage,getImage,_selectedFile ,formFields[index]);
               },
             ),
           ),
@@ -83,7 +87,7 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
               statusBarColor: Colors.green,
               backgroundColor: Colors.white,
             )
-        );
+        );//.then((_){image.delete(recursive: false);});
         this.setState((){
           _selectedFile = cropped;
           _inProcess = false;
@@ -93,6 +97,7 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
           _inProcess = false;
         });
       }
+      
   }
 
 }

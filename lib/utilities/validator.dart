@@ -51,11 +51,38 @@ String validateOneWord(String _val){
 }
 
 // string with space allowedbut symbols not allowed
-String validateAlphabet(String _val){
+String validateFullName(String _val){
+   //print(_val.indexOf(' ')+4);
+   //print(_val.length);
   if(_val.isEmpty){return "Empty Field";}
   else{
     if(!RegExp(r"^[a-zA-Z- ]+$").hasMatch(_val)){
       return "Numbers and symbols not allowed";
+    }else{
+
+      if(_val.length<6){
+        return 'Input name and surname'; 
+      }else{
+        if(_val.contains(' ')){
+           if(_val.indexOf(' ')+4>_val.length){
+            return 'Full name please';
+          }else{
+            return null;
+          }
+        }else{
+            return 'add space between our names';
+        }
+        
+      }
+    }
+   // return null;
+  }
+}
+String validateString(String val){
+  if(val.isEmpty){return "Oops.. it can't be empty !";}
+  else{
+    if(val.length<3){
+      return "Too short";
     }
     return null;
   }

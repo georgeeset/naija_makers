@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:naija_makers/providers/user.dart';
+import 'package:provider/provider.dart';
 
 import '../widgets/presentationslidepage.dart';
-import './user_type_selection.dart';
-import './login.dart';
 
 class IntroductionPage extends StatefulWidget {
   static final String routName = '/introduction_page';
@@ -57,6 +57,7 @@ class _IntroductionPageState extends State<IntroductionPage> {
   @override
   Widget build(BuildContext context) {
     final MediaQueryData mediaQueryData = MediaQuery.of(context);
+    final user=Provider.of<ProfileProvider>(context,listen: false);
     return Scaffold(
       body: Container(
         height: mediaQueryData.size.height,
@@ -82,20 +83,19 @@ class _IntroductionPageState extends State<IntroductionPage> {
               right: 10,
               child: _pageController.hasClients && finished
                   ? RaisedButton(
-                      child: Text(
-                        'Start',
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pushReplacementNamed(
-                            UserTypeSelectionPage.routName);
-                      },
-                      elevation: 0.5,
-                      shape: StadiumBorder(side: BorderSide.none),
-                    )
+                          child: Text(
+                            'Start',
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                          onPressed: () {
+                            user.newUserStatus=NewUserStatus.userType;
+                          },
+                          elevation: 0.5,
+                          shape: StadiumBorder(side: BorderSide.none),
+                        )
                   : FlatButton(
                       child: Text(
                         'Next',
@@ -119,8 +119,7 @@ class _IntroductionPageState extends State<IntroductionPage> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
-                  Navigator.of(context).pushReplacementNamed(
-                            LoginPage.routName);
+                  user.newUserStatus=NewUserStatus.login;
                 },
               ),
             )

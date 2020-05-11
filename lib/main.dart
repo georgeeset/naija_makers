@@ -32,6 +32,7 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.getThemeFromKey(MyThemeKeys.LIGHT),
        
         routes: <String,WidgetBuilder>{
+          //MyHomePage.routName : (context)=> MyHomePage(),
           LandingPage.routName :(context)=> LandingPage(),
           LoginPage.routName :(context) => LoginPage(),
           UpdatePage.routName:(context) => UpdatePage(),
@@ -48,8 +49,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
+  static final String routName='/';
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -61,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Consumer<ProfileProvider>(builder: (context, ProfileProvider user, _){
       return user.loginStatus
       ? LandingPage()
-      : IntroductionPage();
+      : LoginPage();
     },);
     // return LandingPage();
     //return LoginPage();

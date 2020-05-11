@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/widgets.dart';
@@ -10,6 +11,7 @@ import '../models/profile.dart';
 
 enum UploadState { Uploading, Done, Failed }
 enum PhoneAuthStatus {TimeOut, CodeSent, AuthError, Idle}
+enum NewUserStatus {introduction,userType,signup,login}
 
 class ProfileProvider extends ChangeNotifier {
 
@@ -20,6 +22,8 @@ class ProfileProvider extends ChangeNotifier {
   PhoneAuthStatus _phoneAuthStatus;
   double uploadProgress;
   bool _isLoading=false;
+  File awaitingProfilePix;
+  NewUserStatus _newUserStatus= NewUserStatus.introduction;
 
   FirebaseUser _user; //= FirebaseAuth.instance.currentUser();
   FirebaseAuth _auth;
@@ -34,16 +38,17 @@ class ProfileProvider extends ChangeNotifier {
 
   Future<void> _onAuthStateChanged(FirebaseUser firebaseUser) async {
     _user = firebaseUser;
-    
     StreamSubscription<DocumentSnapshot> streamSub;
-    if (_user != null && !_user.isAnonymous) {
-      CollectionReference reference = _firestore.collection('users');
-      streamSub = reference.document(_user.uid).snapshots().listen((snapshot) {
-        _userProfile = Profile.fromMap(snapshot.data);
-      });
-      
+    if (_user != null) {
       _isLoggedin = true;
       notifyListeners();
+
+      if(!_user.isAnonymous){
+          CollectionReference reference = _firestore.collection('users');
+          streamSub = reference.document(_user.uid).snapshots().listen((snapshot) {
+            _userProfile = Profile.fromMap(snapshot.data);
+          });
+      }
 
     } else {
       if (streamSub != null) {
@@ -60,9 +65,11 @@ class ProfileProvider extends ChangeNotifier {
   bool get isAonimous=> _user==null? false :_user.isAnonymous;
   bool get isLoading=>_isLoading;
   int get codeTimeOut=>_verificationTimeout;
+  NewUserStatus get newUserStatus=>_newUserStatus;
 
 
-  
+
+
 
   Future<void> verifyPhoneNumber(String _phone) async {
     _isLoading=true;
@@ -188,6 +195,18 @@ class ProfileProvider extends ChangeNotifier {
   void userTypeSelected(UserType userType){
     print(userType);
     _userProfile.userType=userType; // set user type;
+  }
+
+
+
+
+  void setProfilePix(File pix){ // keep profile pix awaiting user signin
+    awaitingProfilePix=pix;
+  }
+
+  set newUserStatus(NewUserStatus stat){
+    _newUserStatus=stat;
+    notifyListeners();
   }
 }
 
