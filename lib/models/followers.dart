@@ -18,4 +18,12 @@ class Followers {
     businessName=snapshot['business_name'],
     businessLogo=snapshot['business_logo'],
     profilePix=snapshot['profile_pix'];
+  
+  get toMap=>{
+    'name':name,
+    'uid':uid,
+    'business_name':businessName,
+    'business_logo':businessLogo,
+    'profile_pix':profilePix,
+  };
 }

@@ -55,7 +55,7 @@ class _SignupFieldsState extends State<SignupFields> {
                     clipBehavior: Clip.hardEdge,
                     clipper: OneSideClip(),
                     child: Container(
-                      height: mediaQueryData.size.height,
+                      height: mediaQueryData.size.height/2.5,
                       width: mediaQueryData.size.width,
                       decoration: BoxDecoration(
                         color: Colors.green,
@@ -65,8 +65,8 @@ class _SignupFieldsState extends State<SignupFields> {
                   ),
                   widget.snapshot['inputType'] == InputType.selfie
                       ? Positioned(
-                          top: 100,
-                          left: 50,
+                          top: 60,
+                          right: 50,
                           child: ProfileAvatar(
                             widget.cameraButton,
                             widget._selectedFile,
@@ -84,10 +84,8 @@ class _SignupFieldsState extends State<SignupFields> {
                               style: TextStyle(color: Colors.white),
                             ),
                             onPressed: () {
-                              if(widget._selectedFile!=null){
-                                profile.setProfilePix(widget._selectedFile);
+                                profile.awaitigProfilePix= widget._selectedFile;
                                 profile.newUserStatus=NewUserStatus.login;
-                              }
                             },
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20)))
@@ -96,14 +94,14 @@ class _SignupFieldsState extends State<SignupFields> {
                             child: Text(
                               widget.snapshot['action'],
                               style: TextStyle(
-                                fontSize: 19,
+                                fontSize: 13,
                                 fontWeight: FontWeight.bold,
                               ),
                               textAlign: TextAlign.start,
                             )),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 30, left: 20),
+                    padding: EdgeInsets.only(top: 30, left: 40),
                     child: Container(
                         color: Colors.black45,
                         padding: EdgeInsets.all(5),
@@ -111,7 +109,7 @@ class _SignupFieldsState extends State<SignupFields> {
                           'Signup',
                           style: Theme.of(context)
                               .textTheme
-                              .title
+                              .body2
                               .copyWith(color: Colors.white),
                         )),
                   ),
@@ -144,9 +142,10 @@ class _SignupFieldsState extends State<SignupFields> {
             onSubmitted: (value) {
               if(errorText==null&&value!=null){
                 profile.userProfile.name=value;
+                FocusScope.of(context).unfocus();
                 widget.action();
                 
-              }else{print('done');}
+              }
             },
             decoration: InputDecoration(
               errorText: errorText,
@@ -174,6 +173,7 @@ class _SignupFieldsState extends State<SignupFields> {
             onSubmitted: (value){
               if(errorText==null){
                 profile.userProfile.email=value;
+                FocusScope.of(context).unfocus();
                 widget.action();
               }
             },
@@ -205,7 +205,8 @@ class _SignupFieldsState extends State<SignupFields> {
             },
             onSubmitted: (value){
               if(errorText==null){
-                profile.userProfile.email=value;
+                profile.userProfile.businessAddress=value;
+                FocusScope.of(context).unfocus();
                 widget.action();
               }
             },
@@ -247,6 +248,7 @@ class _SignupFieldsState extends State<SignupFields> {
             onSubmitted: (value) {
               if(errorText==null){
                 profile.userProfile.description =value;
+                FocusScope.of(context).unfocus();
                 widget.action();
               }
             },
@@ -281,6 +283,7 @@ class _SignupFieldsState extends State<SignupFields> {
              onSubmitted: (value) {
               if(errorText==null){
                 profile.userProfile.businessName=value;
+                FocusScope.of(context).unfocus();
                 widget.action();
               }
             },

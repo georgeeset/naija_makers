@@ -10,7 +10,7 @@ class Profile {
   String businessAddress;
   bool fullTime;
   String email;
-  String phone;
+  //String phone;
   String profilePix;
   String businessLogo;
   List<Followers> following;
@@ -20,6 +20,7 @@ class Profile {
   String description;
   String coverPhoto;
   UserType userType;
+  String profilePixThumb;
 
 
   Profile({
@@ -29,7 +30,7 @@ class Profile {
     this.businessLogo,
     this.fullTime,
     this.email,
-    this.phone,
+    //this.phone,
     this.profilePix,
     this.followers,
     this.following,
@@ -38,6 +39,7 @@ class Profile {
     this.description,
     this.coverPhoto,
     this.userType,//=UserType.client,
+    this.profilePixThumb,
   });
 
 
@@ -46,15 +48,35 @@ class Profile {
     businessName=snapshot['business_name']?? '',
     businessAddress=snapshot['business_address']?? '',
     businessLogo=snapshot['business_logo']?? '',
-    fullTime=snapshot['fullName']?? '',
+    fullTime=snapshot['fullTime']?? false,
     email=snapshot['email']?? '',
-    phone=snapshot['phone']?? '',
-    profilePix=snapshot['profille_pix']?? '',
-    followers=snapshot['followers'].map((follower)=>Followers.fromMap(follower)).toList(),
-    following=snapshot['following'].map((followed)=>Followers.fromMap(followed)).toList(),
-    userLocation=Location.formMap(snapshot['user_location']),
-    likes=snapshot['likes']??'',
+    //phone=snapshot['phone']?? '',
+    profilePix=snapshot['profile_pix']?? '',
+    followers=snapshot['followers']?.map((follower)=>Followers.fromMap(follower))?.toList(),
+    following=snapshot['following']?.map((followed)=>Followers.fromMap(followed))?.toList(),
+    userLocation= Location.formMap(snapshot['user_location']),
+    likes=snapshot['likes']?? 0,
     description=snapshot['description']??'',
     coverPhoto=snapshot['cover_photo'],
-    userType=snapshot['user_type']?? UserType.client;
+    userType=UserType.values[snapshot['user_type']],
+    profilePixThumb=snapshot['profile_pix_thumb'] ;
+
+    Map<String,dynamic> get toMap=>{
+      'name':name,
+      'business_name':businessName,
+      'business_address':businessAddress,
+      'business_logo':businessLogo,
+      'fullTime':fullTime,
+      'email':email,
+      //'phone':phone,
+      'profile_pix':profilePix,
+      'followers':followers,
+      'following':following,
+      'user_location':userLocation, 
+      'likes':likes,
+      'description':description,
+      'cover_photo':coverPhoto,
+      'user_type':userType.index,
+      'profile_pix_thumb':profilePixThumb
+    };
 }

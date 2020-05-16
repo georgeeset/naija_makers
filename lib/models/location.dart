@@ -1,9 +1,11 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Location {
   final double latitude;
   final double longitude;
-  final geoPoint;
-  final geoHash;
+  final GeoPoint geoPoint;
+  final  geoHash;
   Location({
     this.latitude,
     this.longitude,
@@ -12,8 +14,8 @@ class Location {
   });
 
   Location.formMap(Map<String,dynamic> snapshot):
-    latitude=snapshot['latitude']?? '',
-    longitude=snapshot['longitude']?? '',
+    latitude=snapshot['latitude']?? 0,
+    longitude=snapshot['longitude']?? 0,
     geoPoint=snapshot['geopoint']?? '',
     geoHash=snapshot['geohash']?? '';
 

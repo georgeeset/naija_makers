@@ -67,7 +67,7 @@ class OneSideClip extends CustomClipper<Path>{
     var firstEndPoint=Offset(size.width,size.height);// end of curve
    
     var path= new Path();
-      path.lineTo(0.0,size.height/4);
+      path.lineTo(0.0,size.height/10);
       //draw your curve in betweeen this two point
 
       path.quadraticBezierTo(firstControlPoint.dx,firstControlPoint.dy,
@@ -81,6 +81,6 @@ class OneSideClip extends CustomClipper<Path>{
     return path;
   }
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper)=>true;
+  bool shouldReclip(CustomClipper<Path> oldClipper)=>false; //true;
 
 }

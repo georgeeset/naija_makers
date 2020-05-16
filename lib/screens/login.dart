@@ -19,7 +19,8 @@ class LoginPage extends StatelessWidget {
         case (NewUserStatus.introduction): return IntroductionPage();
         case (NewUserStatus.signup): return UserSignUpPage();
         case (NewUserStatus.userType): return UserTypeSelectionPage();
-        default: return LonginUi();
+
+        default: return LoginUi();
       }
     },);
   }

@@ -36,7 +36,8 @@ class UserTypeSelectionPage extends StatelessWidget {
                                 onTap: (){
                                   //Navigator.of(context).pushReplacementNamed(LoginPage.routName, arguments:index);
                                   profile.userTypeSelected(options[index]['userType']); //update user type temprarily 
-                                  Navigator.of(context).pushReplacementNamed(UserSignUpPage.routName);
+                                 //Navigator.of(context).pushReplacementNamed(UserSignUpPage.routName);
+                                 profile.newUserStatus=NewUserStatus.signup;
                                 },
                                 splashColor: Theme.of(context).accentColor,
                                                               child: Container(

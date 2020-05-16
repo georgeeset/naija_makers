@@ -17,12 +17,12 @@ class ProfileAvatar extends StatelessWidget {
       child: Stack(
         children: <Widget>[
           CircleAvatar(
-            radius: 100,
+            radius: 80,
             backgroundColor: Theme.of(context).primaryColor,
             child: ClipOval(
                 child: Container(
-              height: 195.0,
-              width: 195.0,
+              height: 155.0,
+              width: 155.0,
               color: Colors.green,
               child: _image==null? Container() :Image.file(_image),
             )),

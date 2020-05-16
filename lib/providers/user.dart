@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:naija_makers/repository/manage_image.dart';
 import '../assets/data/user_type.dart';
 import '../models/profile.dart';
 
@@ -22,16 +23,19 @@ class ProfileProvider extends ChangeNotifier {
   PhoneAuthStatus _phoneAuthStatus;
   double uploadProgress;
   bool _isLoading=false;
-  File awaitingProfilePix;
+  File _awaitingProfilePix;
   NewUserStatus _newUserStatus= NewUserStatus.introduction;
+  
 
   FirebaseUser _user; //= FirebaseAuth.instance.currentUser();
   FirebaseAuth _auth;
   Profile _userProfile;
   Firestore _firestore;
+  StorageReference _storageReference;
 
   ProfileProvider.instance() : _auth = FirebaseAuth.instance {
     _firestore=Firestore.instance;
+    _storageReference=FirebaseStorage.instance.ref();
     _userProfile=Profile();
     _auth.onAuthStateChanged.listen(_onAuthStateChanged);
   }
@@ -44,10 +48,51 @@ class ProfileProvider extends ChangeNotifier {
       notifyListeners();
 
       if(!_user.isAnonymous){
+
           CollectionReference reference = _firestore.collection('users');
-          streamSub = reference.document(_user.uid).snapshots().listen((snapshot) {
+
+          final String profilePixLocation='photos/profile_pix/${_user.uid}.jpg';
+          final String profilePixThumbLocation='thumbs/profile_pix/${_user.uid}.jpg';
+          final File compressed =await ManageImage.resizeImage(image: _awaitingProfilePix,width: 300,height: 300);
+
+          reference.document(_user.uid).setData(_userProfile.toMap);
+
+          
+          if(_awaitingProfilePix!=null){ //update saved info if user signedup recently
+
+            await uploadDoc(profilePixLocation,_awaitingProfilePix,).then(
+              (link)async{ 
+                  _userProfile.profilePix=link;
+                  print('profilePix uploaded');
+                   reference.document(_user.uid).updateData(_userProfile.toMap);     
+               }
+            ).catchError((err){
+                print('error uploading pix $err');
+               // reference.document(_user.uid).setData(_userProfile.toMap);
+            });
+
+             await uploadDoc(profilePixThumbLocation ,compressed).then(
+                        (link){
+                        _userProfile.profilePixThumb=link;
+                        reference.document(_user.uid).updateData(_userProfile.toMap);
+                        _awaitingProfilePix.delete();
+                        print ('thumbnail uploaded');
+                      }
+             ).catchError(
+               (err){
+                  print('error uploading pix $err');
+               }
+             );
+
+           
+
+            print('new user');
+
+          }else{
+            streamSub = reference.document(_user.uid).snapshots().listen((snapshot) {
             _userProfile = Profile.fromMap(snapshot.data);
-          });
+            });
+          }
       }
 
     } else {
@@ -66,9 +111,6 @@ class ProfileProvider extends ChangeNotifier {
   bool get isLoading=>_isLoading;
   int get codeTimeOut=>_verificationTimeout;
   NewUserStatus get newUserStatus=>_newUserStatus;
-
-
-
 
 
   Future<void> verifyPhoneNumber(String _phone) async {
@@ -198,10 +240,17 @@ class ProfileProvider extends ChangeNotifier {
   }
 
 
+  Future <String>uploadDoc(String location, File document) async{
+     StorageReference storageReference =_storageReference.child(location);
+      StorageUploadTask uploadTask= storageReference.putFile(document);
+      //return uploadTask;
+    String downloadUrl= await (await uploadTask.onComplete).ref.getDownloadURL();
+   // print(downloadUrl);
+    return downloadUrl;
+  }
 
-
-  void setProfilePix(File pix){ // keep profile pix awaiting user signin
-    awaitingProfilePix=pix;
+  set awaitigProfilePix(File pix){ // keep profile pix awaiting user signin
+    _awaitingProfilePix=pix;
   }
 
   set newUserStatus(NewUserStatus stat){

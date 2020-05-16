@@ -8,7 +8,7 @@ import '../login_clipper_path.dart';
 import '../phone_input_field.dart';
 import '../phone_verification_field.dart';
 
-class LonginUi extends StatelessWidget {
+class LoginUi extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
@@ -33,16 +33,17 @@ class LonginUi extends StatelessWidget {
               clipper: GreenClip(),
             ),
             Positioned(
-              top: 180,
+              top: mediaQueryData.size.height/4.2,
               child: Consumer<ProfileProvider>(
                 builder: (context, profileProvider, child) {
                   return profileProvider.isLoading
                       ? Transform.rotate(
-                          angle: -pi / 10.5,
-                          //origin: Offset(0.0, mediaQueryData.size.width/2),
+                          angle: -pi / 11.7,
+                          origin: Offset(0.0, 0.0),
                           child: Container(
                               width: mediaQueryData.size.width,
-                              child: LinearProgressIndicator()),
+                              child: LinearProgressIndicator(),//valueColor: AlwaysStoppedAnimation<Color>(Colors.green),)
+                              )
                         )
                       : Container();
                 },
@@ -54,7 +55,7 @@ class LonginUi extends StatelessWidget {
                 padding:
                     EdgeInsets.only(bottom: 10, top: 10, left: 20, right: 20),
                 width: mediaQueryData.size.width,
-                height: mediaQueryData.size.height / 4,
+                height: mediaQueryData.size.height / 3,
                 child: Consumer<ProfileProvider>(
                   builder: (context, profile, child) {
                     return ListView(
@@ -95,7 +96,7 @@ class LonginUi extends StatelessWidget {
                           height: 20,
                         ),
                         AnimatedSwitcher(
-                          duration: Duration(milliseconds: 400),
+                          duration: Duration(milliseconds: 500),
                           switchInCurve: Curves.easeInOutExpo,
                           switchOutCurve: Curves.elasticInOut,
                           transitionBuilder:
