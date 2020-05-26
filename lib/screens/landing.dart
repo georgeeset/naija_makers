@@ -1,4 +1,8 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:naija_makers/data/user_type.dart';
+import 'package:naija_makers/providers/user.dart';
+import 'package:provider/provider.dart';
 import '../screens/message.dart';
 import '../screens/maker_profile.dart';
 import '../screens/customer_profile.dart';
@@ -24,6 +28,7 @@ class _LandingPageState extends State<LandingPage> {
 
   @override
   Widget build(BuildContext context) {
+   // var profile=Provider.of<ProfileProvider>(context);
     return GestureDetector(
       onTap: (){
          FocusScopeNode currentFocus=FocusScope.of(context);
@@ -37,49 +42,76 @@ class _LandingPageState extends State<LandingPage> {
           child: DefaultTabController(
         length: 3,
         child: Scaffold(
-          appBar: AppBar(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text('Naija Makers'),
-                 AnimatedSwitcher(duration: Duration(milliseconds:400),
-                 switchInCurve: Curves.easeIn,
-                 switchOutCurve: Curves.easeOut,
-                 transitionBuilder: (Widget child, Animation<double>animation){
-                   return ScaleTransition(child: child, scale: animation,);
-                 },
-                  child: searchWidget,
-                 )
+              appBar: AppBar(
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text('Naija Makers'),
+                     AnimatedSwitcher(duration: Duration(milliseconds:400),
+                     switchInCurve: Curves.easeIn,
+                     switchOutCurve: Curves.easeOut,
+                     transitionBuilder: (Widget child, Animation<double>animation){
+                       return ScaleTransition(child: child, scale: animation,);
+                     },
+                      child: searchWidget,
+                     )
 
-              ],
-            ),
-            elevation: 0.5,
-            bottom: TabBar(
-              indicatorSize: TabBarIndicatorSize.label,
-              tabs: <Widget>[
-                Tab(
-                  child: Icon(Icons.home),
+                  ],
                 ),
-                Tab(
-                  child: Icon(Icons.mail),
+                elevation: 0.5,
+                bottom: TabBar(
+                  indicatorSize: TabBarIndicatorSize.label,
+                  tabs: <Widget>[
+                    Tab(
+                      child: Icon(Icons.home),
+                    ),
+                    Tab(
+                      child: Icon(Icons.mail),
+                    ),
+                    Tab(
+                      child: Icon(Icons.person),
+                    ),
+                  ],
                 ),
-                Tab(
-                  child: Icon(Icons.person),
-                ),
-              ],
-            ),
-          ),
-          // drawer: NavigatorMenu(),
-          body: TabBarView(
-            children: <Widget>[
-              HomePage(),
-              MessagePage(),
-              //CustomerProfile(),
-              MakerProfilePage(),
-            ],
-          ),
+              ),
+              // drawer: NavigatorMenu(),
+              body: Stack(
+                children: <Widget>[
+                  Consumer<ProfileProvider>(builder: (BuildContext context, profile, _) {
+                    return TabBarView(
+                    children: <Widget>[
+                      HomePage(),
+                      MessagePage(),
+                      profile.userProfile==null?
+                      CircularProgressIndicator():
+                      profile.userProfile.userType==UserType.maker? MakerProfilePage(isEditable: true):CustomerProfile(),
+                    ],
+                  );
+                  },),
+                  Consumer<ProfileProvider>(builder: (BuildContext context, ProfileProvider owner, Widget child) {
+                return  owner.uploadTask != null
+                            ? StreamBuilder<StorageTaskEvent>(
+                                stream: owner.uploadTask.events,
+                                builder: (_,snapshot) {
+                                  print(snapshot.connectionState);
+                                  //var event=snapshot?.data?.snapshot;
+                                  //double progressPercent=event!= null  ? event.bytesTransferred / event.totalByteCount : 0;
+                                  //if(progressPercent==100){owner.uploadevent=n}
+
+                                  return SizedBox(height: 2,width: double.infinity,child: LinearProgressIndicator());//value: progressPercent
+                                },
+                              )
+                            : Container();
+              },),
+
+             // SizedBox(height: 3,width: double.infinity,child: LinearProgressIndicator()),
+                ],
+              )
         ),
       ),
+
+
+       
     );
   }
 

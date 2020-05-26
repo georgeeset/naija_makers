@@ -1,6 +1,6 @@
 import './followers.dart';
 import './location.dart';
-import '../assets/data/user_type.dart';
+import '../data/user_type.dart';
 
 
 //TODO :pls add user type: to be able to defferenciate between user and maker
@@ -13,15 +13,12 @@ class Profile {
   //String phone;
   String profilePix;
   String businessLogo;
-  List<Followers> following;
-  List<Followers> followers;
-  Location userLocation;
+  //Location userLocation;
   int likes;
   String description;
   String coverPhoto;
   UserType userType;
   String profilePixThumb;
-
 
   Profile({
     this.name,
@@ -32,13 +29,11 @@ class Profile {
     this.email,
     //this.phone,
     this.profilePix,
-    this.followers,
-    this.following,
-    this.userLocation,
+    //this.userLocation,
     this.likes,
     this.description,
     this.coverPhoto,
-    this.userType,//=UserType.client,
+    this.userType=UserType.client,
     this.profilePixThumb,
   });
 
@@ -52,9 +47,9 @@ class Profile {
     email=snapshot['email']?? '',
     //phone=snapshot['phone']?? '',
     profilePix=snapshot['profile_pix']?? '',
-    followers=snapshot['followers']?.map((follower)=>Followers.fromMap(follower))?.toList(),
-    following=snapshot['following']?.map((followed)=>Followers.fromMap(followed))?.toList(),
-    userLocation= Location.formMap(snapshot['user_location']),
+    //followers=snapshot['followers']?.map((follower)=>Followers.fromMap(follower))?.toList(),
+    //following=snapshot['following']?.map((followed)=>Followers.fromMap(followed))?.toList(),
+    //userLocation= Location.formMap(snapshot['user_location']),
     likes=snapshot['likes']?? 0,
     description=snapshot['description']??'',
     coverPhoto=snapshot['cover_photo'],
@@ -70,9 +65,9 @@ class Profile {
       'email':email,
       //'phone':phone,
       'profile_pix':profilePix,
-      'followers':followers,
-      'following':following,
-      'user_location':userLocation, 
+      //'followers':followers,
+      //'following':following,
+      //'user_location':userLocation, 
       'likes':likes,
       'description':description,
       'cover_photo':coverPhoto,

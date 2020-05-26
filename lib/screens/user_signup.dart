@@ -1,13 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:naija_makers/assets/data/user_type.dart';
-import 'package:naija_makers/providers/user.dart';
+import 'package:naija_makers/repository/crop_image.dart';
+import 'package:naija_makers/repository/image_getter.dart';
+import '../data/user_type.dart';
+import '../providers/user.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/signup_widgets/signup_fields.dart';
-import '../assets/data/signup_data.dart';
+import '../data/signup_data.dart';
 
 class UserSignUpPage extends StatefulWidget {
   static final String routName='/user-signup-page';
@@ -28,6 +29,13 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    pageController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final MediaQueryData mediaQueryData = MediaQuery.of(context);
     final profile=Provider.of<ProfileProvider>(context,listen: false);
@@ -39,6 +47,7 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
           currentFocus.unfocus();
         }
       },
+
           child: Scaffold(
         backgroundColor: Theme.of(context).primaryColor,
         body: Container(
@@ -46,7 +55,7 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
           height: mediaQueryData.size.height / 2,
           child: AbsorbPointer(
             absorbing: _inProcess,
-                    child: PageView.builder(
+               child: PageView.builder(
               controller: pageController,
               itemCount: formFields.length,//profile.userProfile.userType==UserType.maker? MakerSignupData.signupData.length:UserSignupData.signupData.length,
               itemBuilder: (context,int index){
@@ -67,37 +76,33 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
     );
   }
 
-  getImage(ImageSource source) async {
-      this.setState((){
+  getImage(ImageSource source)async{
+     this.setState((){
         _inProcess = true;
       });
-      File image = await ImagePicker.pickImage(source: source);
-      if(image != null){
-        File cropped = await ImageCropper.cropImage(
-            sourcePath: image.path,
-            aspectRatio: CropAspectRatio(
-                ratioX: 1, ratioY: 1),
-            compressQuality: 100,
-            maxWidth: 700,
-            maxHeight: 700,
-            compressFormat: ImageCompressFormat.jpg,
-            androidUiSettings: AndroidUiSettings(
-              toolbarColor: Colors.white,
-              toolbarTitle: "Cropper",
-              statusBarColor: Colors.green,
-              backgroundColor: Colors.white,
-            )
-        );//.then((_){image.delete(recursive: false);});
-        this.setState((){
-          _selectedFile = cropped;
-          _inProcess = false;
-        });
-      } else {
-        this.setState((){
-          _inProcess = false;
-        });
-      }
-      
+     await ImageGetter.getImage(source)
+     .then((value)async{
+        if(value!=null){
+          await CropImage.getCroppedImage(value).then(
+            (value) {
+              if(value!=null){
+                this.setState((){
+                  _inProcess = false;
+                  _selectedFile = value;
+                });
+                
+              }else{setState(() {
+                _inProcess=false;
+              });}
+            }
+          );
+        }else{setState(() {
+          _inProcess=false;
+        });}
+
+     });
+
+     
   }
 
 }

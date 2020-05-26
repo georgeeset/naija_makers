@@ -5,9 +5,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:naija_makers/repository/cloud_storage_service.dart';
 import 'package:naija_makers/repository/manage_image.dart';
-import '../assets/data/user_type.dart';
+import '../data/user_type.dart';
 import '../models/profile.dart';
+import '../data/db_locations.dart';
 
 
 enum UploadState { Uploading, Done, Failed }
@@ -33,6 +35,9 @@ class ProfileProvider extends ChangeNotifier {
   Firestore _firestore;
   StorageReference _storageReference;
 
+  StorageUploadTask _uploadTask;
+
+
   ProfileProvider.instance() : _auth = FirebaseAuth.instance {
     _firestore=Firestore.instance;
     _storageReference=FirebaseStorage.instance.ref();
@@ -49,33 +54,33 @@ class ProfileProvider extends ChangeNotifier {
 
       if(!_user.isAnonymous){
 
-          CollectionReference reference = _firestore.collection('users');
-
-          final String profilePixLocation='photos/profile_pix/${_user.uid}.jpg';
-          final String profilePixThumbLocation='thumbs/profile_pix/${_user.uid}.jpg';
-          final File compressed =await ManageImage.resizeImage(image: _awaitingProfilePix,width: 300,height: 300);
-
-          reference.document(_user.uid).setData(_userProfile.toMap);
+          CollectionReference reference=_firestore.collection('users');
+          final String profilePixLocation='${DBLocations.profilePix + _user.uid}.jpg';
+          final String profilePixThumbLocation='${DBLocations.profilePixThumb + _user.uid}.jpg';
 
           
           if(_awaitingProfilePix!=null){ //update saved info if user signedup recently
-
-            await uploadDoc(profilePixLocation,_awaitingProfilePix,).then(
+            final File compressed =await ManageImage.resizeImage(image: _awaitingProfilePix,quality:30);
+            setProfile();
+            
+            await _uploadDoc(profilePixLocation,_awaitingProfilePix,).then(
               (link)async{ 
                   _userProfile.profilePix=link;
+                  //notifyListeners();
                   print('profilePix uploaded');
-                   reference.document(_user.uid).updateData(_userProfile.toMap);     
+                  updateProfile();
+
                }
             ).catchError((err){
                 print('error uploading pix $err');
                // reference.document(_user.uid).setData(_userProfile.toMap);
             });
 
-             await uploadDoc(profilePixThumbLocation ,compressed).then(
+             await _uploadDoc(profilePixThumbLocation ,compressed).then(
                         (link){
                         _userProfile.profilePixThumb=link;
-                        reference.document(_user.uid).updateData(_userProfile.toMap);
-                        _awaitingProfilePix.delete();
+                        //notifyListeners();
+                        updateProfile();
                         print ('thumbnail uploaded');
                       }
              ).catchError(
@@ -84,13 +89,14 @@ class ProfileProvider extends ChangeNotifier {
                }
              );
 
-           
-
-            print('new user');
+            //print('new user');
+            _awaitingProfilePix.delete();
 
           }else{
             streamSub = reference.document(_user.uid).snapshots().listen((snapshot) {
+              //print(snapshot.data);
             _userProfile = Profile.fromMap(snapshot.data);
+            notifyListeners();
             });
           }
       }
@@ -111,6 +117,7 @@ class ProfileProvider extends ChangeNotifier {
   bool get isLoading=>_isLoading;
   int get codeTimeOut=>_verificationTimeout;
   NewUserStatus get newUserStatus=>_newUserStatus;
+  StorageUploadTask get uploadTask=>_uploadTask;
 
 
   Future<void> verifyPhoneNumber(String _phone) async {
@@ -123,7 +130,7 @@ class ProfileProvider extends ChangeNotifier {
       _auth.signInWithCredential(phoneAuthCredential);
       _phoneAuthStatus=PhoneAuthStatus.Idle;
       notifyListeners();
-      print('completed');
+      print('Verification completed');
 
       _isLoading=false;
       notifyListeners();
@@ -240,13 +247,73 @@ class ProfileProvider extends ChangeNotifier {
   }
 
 
-  Future <String>uploadDoc(String location, File document) async{
+  Future <String>_uploadDoc(String location, File document) async{
      StorageReference storageReference =_storageReference.child(location);
-      StorageUploadTask uploadTask= storageReference.putFile(document);
+     StorageUploadTask uploadTask= storageReference.putFile(document);
       //return uploadTask;
     String downloadUrl= await (await uploadTask.onComplete).ref.getDownloadURL();
    // print(downloadUrl);
     return downloadUrl;
+  }
+
+ void uploadCoverPhoto(File image)async{
+    String fileInfo='${DBLocations.coverPhoto + _user.uid}.jpg';
+    CloudStorageService cloudStorageService=CloudStorageService();
+    _uploadTask= cloudStorageService.startUpload(file: image,filePath: fileInfo);
+    notifyListeners();
+    await(await _uploadTask.onComplete).ref.getDownloadURL().then((downloadUrl){
+      _userProfile.coverPhoto=downloadUrl;
+      _uploadTask=null;
+      notifyListeners();
+      updateProfile();
+    });
+  }
+
+  void uploadProfileLogo(File image)async{
+    String fileInfo='${DBLocations.profileLogo + _user.uid}.jpg';
+    CloudStorageService cloudStorageService=CloudStorageService();
+    _uploadTask=cloudStorageService.startUpload(file: image,filePath: fileInfo);
+    notifyListeners();
+    await(await _uploadTask.onComplete).ref.getDownloadURL().then((downloadUrl){
+      _userProfile.businessLogo=downloadUrl;
+      notifyListeners();
+    });
+  }
+
+  void uploadProfilePix(File fullImage,File compressedImage)async{
+    String fileInfo='${DBLocations.profilePix + _user.uid}.jpg';
+    String thumbinfo='${DBLocations.profilePixThumb + _user.uid}.jpg';
+    CloudStorageService cloudStorageService=CloudStorageService();
+    _uploadTask=cloudStorageService.startUpload(file: fullImage,filePath: fileInfo);
+    notifyListeners();
+
+    await(await _uploadTask.onComplete).ref.getDownloadURL().then((downloadUrl)async{
+      _userProfile.profilePix=downloadUrl;
+      notifyListeners();
+      _uploadTask=cloudStorageService.startUpload(file: compressedImage,filePath:thumbinfo);
+      notifyListeners();
+      await(await _uploadTask.onComplete).ref.getDownloadURL().then((url){
+        _userProfile.profilePixThumb=url;
+        _uploadTask=null;
+        notifyListeners();
+        updateProfile();
+       
+      });
+
+    });
+  }
+
+  void updateProfile(){
+    CollectionReference reference=_firestore.collection('users');
+    reference = _firestore.collection('users');
+    reference.document(_user.uid).updateData(_userProfile.toMap);
+
+  }
+  
+  void setProfile(){
+    CollectionReference reference=_firestore.collection('users');
+    reference = _firestore.collection('users');
+    reference.document(_user.uid).setData(_userProfile.toMap);
   }
 
   set awaitigProfilePix(File pix){ // keep profile pix awaiting user signin
@@ -256,6 +323,14 @@ class ProfileProvider extends ChangeNotifier {
   set newUserStatus(NewUserStatus stat){
     _newUserStatus=stat;
     notifyListeners();
+  }
+
+  set userProfile(Profile userProfile){
+    _userProfile=userProfile;
+    notifyListeners();
+  }
+  set busy(bool busy){
+
   }
 }
 

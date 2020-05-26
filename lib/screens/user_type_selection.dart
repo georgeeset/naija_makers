@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:naija_makers/assets/data/user_type.dart';
+import '../data/user_type.dart';
 import 'package:naija_makers/providers/user.dart';
-import 'package:naija_makers/screens/user_signup.dart';
 import 'package:provider/provider.dart';
 
 

@@ -8,7 +8,6 @@ import './widgets/theme.dart';
 import './screens/update.dart';
 import './screens/landing.dart';
 import './screens/login.dart';
-import './screens/maker_profile.dart';
 import './screens/introduction.dart';
 import './screens/user_type_selection.dart';
 import 'screens/profile.dart';

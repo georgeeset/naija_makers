@@ -2,16 +2,18 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:naija_makers/providers/user.dart';
-import 'package:naija_makers/screens/login.dart';
 import 'package:naija_makers/utilities/validator.dart';
-import 'package:naija_makers/widgets/home.dart';
 import 'package:provider/provider.dart';
-import '../../main.dart';
 import '../phone_input_field.dart';
 import '../phone_verification_field.dart';
 import '../login_clipper_path.dart';
-import '../../assets/data/signup_data.dart';
+import '../../data/signup_data.dart';
 import '../profile_avatar.dart';
+import 'business_address_field.dart';
+import 'business_info_field.dart';
+import 'business_name_field.dart';
+import 'email_input_field.dart';
+import 'name_input_field.dart';
 
 class SignupFields extends StatefulWidget {
   final Function action;
@@ -19,14 +21,15 @@ class SignupFields extends StatefulWidget {
   final Map<String, dynamic> snapshot;
   final File _selectedFile;
 
-  SignupFields( this.action, this.cameraButton, this._selectedFile, this.snapshot);
+  SignupFields(
+      this.action, this.cameraButton, this._selectedFile, this.snapshot);
 
   @override
   _SignupFieldsState createState() => _SignupFieldsState();
 }
 
 class _SignupFieldsState extends State<SignupFields> {
-  final Validate validate=Validate();
+  final Validate validate = Validate();
   //profile=Provider.of<ProfileProvider>(context ,listen:false);
   ProfileProvider profile;
   String errorText;
@@ -35,8 +38,9 @@ class _SignupFieldsState extends State<SignupFields> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    profile=Provider.of<ProfileProvider>(context ,listen:false);
+    profile = Provider.of<ProfileProvider>(context, listen: false);
   }
+
   @override
   Widget build(BuildContext context) {
     final MediaQueryData mediaQueryData = MediaQuery.of(context);
@@ -55,7 +59,7 @@ class _SignupFieldsState extends State<SignupFields> {
                     clipBehavior: Clip.hardEdge,
                     clipper: OneSideClip(),
                     child: Container(
-                      height: mediaQueryData.size.height/2.5,
+                      height: mediaQueryData.size.height / 2.5,
                       width: mediaQueryData.size.width,
                       decoration: BoxDecoration(
                         color: Colors.green,
@@ -84,8 +88,8 @@ class _SignupFieldsState extends State<SignupFields> {
                               style: TextStyle(color: Colors.white),
                             ),
                             onPressed: () {
-                                profile.awaitigProfilePix= widget._selectedFile;
-                                profile.newUserStatus=NewUserStatus.login;
+                              profile.awaitigProfilePix = widget._selectedFile;
+                              profile.newUserStatus = NewUserStatus.login;
                             },
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20)))
@@ -130,99 +134,15 @@ class _SignupFieldsState extends State<SignupFields> {
     switch (widget.snapshot['inputType']) {
       case (InputType.fullName):
         {
-          return TextField(
-            autofocus: true,
-            textCapitalization: TextCapitalization.words,
-            textInputAction: TextInputAction.next,
-            onChanged: (val){
-              setState(() {
-                errorText=validate.validateFullName(val);
-              });
-            },
-            onSubmitted: (value) {
-              if(errorText==null&&value!=null){
-                profile.userProfile.name=value;
-                FocusScope.of(context).unfocus();
-                widget.action();
-                
-              }
-            },
-            decoration: InputDecoration(
-              errorText: errorText,
-              labelText: widget.snapshot['label'],
-              labelStyle: TextStyle(color: Colors.black54),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-              filled: true,
-              //fillColor: Colors.white,
-            ),
-          );
+          return NameInputField(widget.action, widget.snapshot['label']);
         }
       case (InputType.email):
         {
-          return TextField(
-            autofocus: true,
-            textCapitalization: TextCapitalization.none,
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.next,
-            onChanged: (val){
-              setState(() {
-                errorText=validate.validateEmail(val);
-              });
-            },
-            onSubmitted: (value){
-              if(errorText==null){
-                profile.userProfile.email=value;
-                FocusScope.of(context).unfocus();
-                widget.action();
-              }
-            },
-            decoration: InputDecoration(
-              labelText: widget.snapshot['label'],
-              errorText: errorText,
-              labelStyle: TextStyle(color: Colors.black54),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-              filled: true,
-              prefixIcon: Icon(
-                Icons.email,
-              ),
-              //fillColor: Colors.white,
-            ),
-          );
+          return EmailInputField(widget.action, widget.snapshot['label']);
         }
-         case (InputType.businessAddress):
+      case (InputType.businessAddress):
         {
-          return TextField(
-            autofocus: true,
-            textCapitalization: TextCapitalization.none,
-            keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.next,
-            onChanged: (val){
-              setState(() {
-                errorText=validate.validateString(val);
-              });
-            },
-            onSubmitted: (value){
-              if(errorText==null){
-                profile.userProfile.businessAddress=value;
-                FocusScope.of(context).unfocus();
-                widget.action();
-              }
-            },
-            decoration: InputDecoration(
-              labelText: widget.snapshot['label'],
-              errorText: errorText,
-              labelStyle: TextStyle(color: Colors.black54),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-              filled: true,
-              prefixIcon: Icon(
-                Icons.email,
-              ),
-              //fillColor: Colors.white,
-            ),
-          );
+          return BusinessAddressField(widget.action, widget.snapshot['label']);
         }
       case (InputType.phone):
         {
@@ -233,74 +153,14 @@ class _SignupFieldsState extends State<SignupFields> {
         {
           return PhoneVerificationField();
         }
-        case (InputType.businessInfo):
+      case (InputType.businessInfo):
         {
-          return TextField(
-            autofocus: true,
-            textCapitalization: TextCapitalization.sentences,
-            keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.next,
-            onChanged: (val){
-              setState(() {
-                errorText=validate.validateNote(val);
-              });
-            },
-            onSubmitted: (value) {
-              if(errorText==null){
-                profile.userProfile.description =value;
-                FocusScope.of(context).unfocus();
-                widget.action();
-              }
-            },
-           // maxLines: 1,
-            decoration: InputDecoration(
-              labelText: widget.snapshot['label'],
-              labelStyle: TextStyle(color: Colors.black54),
-              errorText: errorText,
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-              filled: true,
-              prefixIcon: Icon(
-                Icons.note,color: Colors.green,
-              ),
-              //fillColor: Colors.white,
-            ),
-          );
+          return BusinessInfoField(widget.action, widget.snapshot['label']);
         }
 
-         case (InputType.businessName):
+      case (InputType.businessName):
         {
-          return TextField(
-            autofocus: true,
-            textCapitalization: TextCapitalization.none,
-            keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.next,
-            onChanged: (val){
-              setState(() {
-                errorText=validate.validateString(val);
-              });
-            },
-             onSubmitted: (value) {
-              if(errorText==null){
-                profile.userProfile.businessName=value;
-                FocusScope.of(context).unfocus();
-                widget.action();
-              }
-            },
-            maxLines: null,
-            decoration: InputDecoration(
-              errorText: errorText,
-              labelText: widget.snapshot['label'],
-              labelStyle: TextStyle(color: Colors.black54),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-              filled: true,
-              prefixIcon: Icon(
-                Icons.note,color: Colors.green,
-              ),
-              //fillColor: Colors.white,
-            ),
-          );
+          return BusinessNameField(widget.action, widget.snapshot['label']);
         }
 
       default:
