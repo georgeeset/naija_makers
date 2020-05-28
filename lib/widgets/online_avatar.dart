@@ -32,7 +32,7 @@ class OnlineAvatar extends StatelessWidget {
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return ImageShower(imageLink: imageLink);
+                    return ImageShower(imageLink: fullImageLink);
                   });
             } else {
               print('clicked');

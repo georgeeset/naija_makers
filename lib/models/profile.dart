@@ -1,5 +1,4 @@
-import './followers.dart';
-import './location.dart';
+
 import '../data/user_type.dart';
 
 

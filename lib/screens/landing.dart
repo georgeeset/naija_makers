@@ -84,7 +84,7 @@ class _LandingPageState extends State<LandingPage> {
                       MessagePage(),
                       profile.userProfile==null?
                       CircularProgressIndicator():
-                      profile.userProfile.userType==UserType.maker? MakerProfilePage(isEditable: true):CustomerProfile(),
+                      profile.userProfile.userType==UserType.maker? MakerProfilePage(isEditable: true):CustomerProfile(isEditable: true,),
                     ],
                   );
                   },),

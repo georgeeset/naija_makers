@@ -12,6 +12,8 @@ import 'package:naija_makers/widgets/cover_photo.dart';
 import 'package:naija_makers/widgets/edit_pen.dart';
 import 'package:naija_makers/widgets/image_shower.dart';
 import 'package:naija_makers/widgets/online_avatar.dart';
+import 'package:naija_makers/widgets/profile_properties/email_row.dart';
+import 'package:naija_makers/widgets/profile_properties/name_row.dart';
 import 'package:naija_makers/widgets/signup_widgets/business_address_field.dart';
 import 'package:naija_makers/widgets/signup_widgets/business_info_field.dart';
 import 'package:naija_makers/widgets/signup_widgets/business_name_field.dart';
@@ -35,7 +37,7 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
   @override
   void initState() {
     super.initState();
-    owner = Provider.of<ProfileProvider>(context, listen: false);
+    owner = Provider.of<ProfileProvider>(context,listen: false);
   }
 
   @override
@@ -91,65 +93,7 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: Column(
                   children: <Widget>[
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const Text(
-                                'Name:',
-                              ),
-                              Container(
-                                width: mediaQueryData.size.width * .80,
-                                child: Text(
-                                  profile.name,
-                                  style: Theme.of(context).textTheme.subhead,
-                                ),
-                              ),
-                            ],
-                          ),
-                          widget.isEditable
-                              ? IconButton(
-                                  icon: Icon(
-                                    Icons.mode_edit,
-                                    color: Colors.green,
-                                    size: 20,
-                                  ),
-                                  onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return Dialog(
-                                            backgroundColor:
-                                                Colors.lightGreen[300],
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20)),
-                                            child: Container(
-                                                height:
-                                                    mediaQueryData.size.height /
-                                                        4,
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 5),
-                                                child: Center(
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      NameInputField(
-                                                          editName, 'Name'),
-                                                      //RaisedButton(child:Text('ok'),onPressed:(){Navigator.pop(context);},)
-                                                    ],
-                                                  ),
-                                                )),
-                                          );
-                                        });
-                                  },
-                                )
-                              : Container(),
-                        ]),
+                    NameRow(data:profile.name,editName: editName,isEditable:widget.isEditable,),
                     // myContainer(),
                     Divider(),
                     Row(
@@ -314,71 +258,7 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
 
                     Divider(),
 
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const Text(
-                                'Email:',
-                              ),
-                              Container(
-                                width: mediaQueryData.size.width * .80,
-                                child: SelectableText(
-                                  profile.email,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .subhead
-                                      .copyWith(
-                                        color: Colors.green,
-                                      ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          widget.isEditable
-                              ? IconButton(
-                                  icon: Icon(
-                                    Icons.mode_edit,
-                                    color: Colors.green,
-                                    size: 20,
-                                  ),
-                                  onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return Dialog(
-                                            // insetAnimationDuration: Duration(milliseconds: 400),
-                                            backgroundColor:
-                                                Colors.lightGreen[300],
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20)),
-                                            child: Container(
-                                                height:
-                                                    mediaQueryData.size.height /
-                                                        4,
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 5),
-                                                child: Center(
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      EmailInputField(
-                                                          editEmail, 'Email'),
-                                                      //RaisedButton(child:Text('ok'),onPressed:(){Navigator.pop(context);},)
-                                                    ],
-                                                  ),
-                                                )),
-                                          );
-                                        });
-                                  },
-                                )
-                              : Container(),
-                        ]),
+                    EmailRow(data:profile.email, editEmail: editEmail,isEditable: widget.isEditable,),
                     Divider(),
                     myContainer(),
                     Row(
@@ -433,7 +313,7 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.subhead,
                             ),
-                            Text(
+                            SelectableText(
                               profile.description,
                               maxLines: null,
                             ),
