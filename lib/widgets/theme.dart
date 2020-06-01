@@ -33,9 +33,11 @@ class AppTheme{
 
     appBarTheme: AppBarTheme(
       elevation: 0.5,
-    )
+    ),
 
-    
+    //pageTransitionsTheme: PageTransitionsTheme(builders: {
+      
+   // })
 
   );
 

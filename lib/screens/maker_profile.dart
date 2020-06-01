@@ -14,11 +14,10 @@ import 'package:naija_makers/widgets/image_shower.dart';
 import 'package:naija_makers/widgets/online_avatar.dart';
 import 'package:naija_makers/widgets/profile_properties/email_row.dart';
 import 'package:naija_makers/widgets/profile_properties/name_row.dart';
+import 'package:naija_makers/widgets/route/fade_scale_route.dart';
 import 'package:naija_makers/widgets/signup_widgets/business_address_field.dart';
 import 'package:naija_makers/widgets/signup_widgets/business_info_field.dart';
 import 'package:naija_makers/widgets/signup_widgets/business_name_field.dart';
-import 'package:naija_makers/widgets/signup_widgets/email_input_field.dart';
-import 'package:naija_makers/widgets/signup_widgets/name_input_field.dart';
 import 'package:provider/provider.dart';
 
 class MakerProfilePage extends StatefulWidget {
@@ -42,6 +41,7 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    print('maker Profile build');
     final MediaQueryData mediaQueryData = MediaQuery.of(context);
     const double radius = 80; // determines the positions of the circle avatar
 
@@ -265,16 +265,18 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Hero(
-                          tag: 'image',
+                          tag: profile.businessLogo,
                           child: GestureDetector(
                             onTap: () {
                               if (profile.businessLogo != '' && profile.businessLogo!=null) {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return ImageShower(
-                                          imageLink: profile.businessLogo);
-                                    });
+                                // showDialog(
+                                //     context: context,
+                                //     builder: (BuildContext context) {
+                                //       return ImageShower(
+                                //           imageLink: profile.businessLogo,hero: profile.businessLogo,);
+                                //     });
+                                   Navigator.push(context, FadeScaleRoute(page: ImageShower(hero: profile.businessLogo,imageLink:profile.businessLogo,)));
+
                               }
                             },
                             child: Container(
@@ -362,7 +364,7 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
               ),
               Divider(),
               myContainer(),
-              Text(
+             Text(
                 'Recent Post',
                 style: Theme.of(context).textTheme.title,
                 textAlign: TextAlign.center,
@@ -385,6 +387,7 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
       print('image is selected');
       setState(() {
         isLoading = true;
+        print('setState from editprfilePix');
       });
 
       await CropImage.getCroppedImage(pickedImage).then((cropped) {
@@ -396,6 +399,7 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
 
             setState(() {
               isLoading = false;
+              print('setState from getCropped image');
             });
             owner.uploadProfilePix(cropped, thumbnail);
           });

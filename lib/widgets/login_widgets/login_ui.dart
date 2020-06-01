@@ -9,10 +9,9 @@ import '../phone_input_field.dart';
 import '../phone_verification_field.dart';
 
 class LoginUi extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
-   final MediaQueryData mediaQueryData = MediaQuery.of(context);
+    final MediaQueryData mediaQueryData = MediaQuery.of(context);
 
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
@@ -33,19 +32,36 @@ class LoginUi extends StatelessWidget {
               clipper: GreenClip(),
             ),
             Positioned(
-              top: mediaQueryData.size.height/4.2,
+              top: mediaQueryData.size.height / 4.2,
+              left: (mediaQueryData.size.width/2)-30,
               child: Consumer<ProfileProvider>(
                 builder: (context, profileProvider, child) {
-                  return profileProvider.isLoading
-                      ? Transform.rotate(
-                          angle: -pi / 11.7,
-                          origin: Offset(0.0, 0.0),
-                          child: Container(
-                              width: mediaQueryData.size.width,
-                              child: LinearProgressIndicator(),//valueColor: AlwaysStoppedAnimation<Color>(Colors.green),)
-                              )
-                        )
-                      : Container();
+                  // return profileProvider.isLoading
+                  //     ? Transform.rotate(
+                  //         angle: -pi / 11.7,
+                  //         origin: Offset(0.0, 0.0),
+                  //         child: Container(
+                  //             width: mediaQueryData.size.width,
+                  //             child: LinearProgressIndicator(),//valueColor: AlwaysStoppedAnimation<Color>(Colors.green),)
+                  //             )
+                  //       )
+                  //     : Container();
+
+                  return AnimatedContainer(
+                    duration: Duration(milliseconds: 1000),
+                    curve: Curves.easeIn,
+                    child: Card(
+                            elevation:3.0,
+                            color: Colors.white,
+                        shape: CircleBorder(),
+                        clipBehavior: Clip.antiAlias,
+                        child: Container(
+                          child: CircleAvatar(
+                            radius: profileProvider.isLoading ? 30.0 :0.0,
+                            child: CircularProgressIndicator(),
+                          ),
+                        )),
+                  );
                 },
               ),
             ),
@@ -61,9 +77,13 @@ class LoginUi extends StatelessWidget {
                     return ListView(
                       children: <Widget>[
                         profile.phoneAuthStatus == PhoneAuthStatus.CodeSent
-                            ? Column(crossAxisAlignment: CrossAxisAlignment.start,
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Text('Enter sms verification',style: TextStyle(fontSize: 20),),
+                                  Text(
+                                    'Enter sms verification',
+                                    style: TextStyle(fontSize: 20),
+                                  ),
                                   Row(
                                     children: <Widget>[
                                       Text('You can resend code after.. '),
@@ -79,7 +99,10 @@ class LoginUi extends StatelessWidget {
                                           );
                                         },
                                         child: Text(
-                                          '${profile.codeTimeOut}', style: TextStyle(fontSize: 22,color: Colors.green),
+                                          '${profile.codeTimeOut}',
+                                          style: TextStyle(
+                                              fontSize: 22,
+                                              color: Colors.green),
                                           key: ValueKey<int>(
                                               profile.codeTimeOut),
                                         ),
@@ -90,7 +113,8 @@ class LoginUi extends StatelessWidget {
                                 ],
                               )
                             : Text(
-                                'Signin with phone', style: TextStyle(fontSize: 20),
+                                'Signin with phone',
+                                style: TextStyle(fontSize: 20),
                               ),
                         SizedBox(
                           height: 20,

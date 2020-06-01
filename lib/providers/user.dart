@@ -118,6 +118,7 @@ class ProfileProvider extends ChangeNotifier {
   int get codeTimeOut=>_verificationTimeout;
   NewUserStatus get newUserStatus=>_newUserStatus;
   StorageUploadTask get uploadTask=>_uploadTask;
+  FirebaseUser get user=>_user;
 
 
   Future<void> verifyPhoneNumber(String _phone) async {

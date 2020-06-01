@@ -15,13 +15,13 @@ import 'screens/profile.dart';
 void main(){
    WidgetsFlutterBinding.ensureInitialized();
    runApp(MyApp());
-
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    print('main Build');
     return MultiProvider(
       providers:[
         ChangeNotifierProvider(create:(_)=>ProfileProvider.instance(),),
@@ -29,7 +29,8 @@ class MyApp extends StatelessWidget {
           child: MaterialApp(
         title: 'Flutter Demo',
         theme: AppTheme.getThemeFromKey(MyThemeKeys.LIGHT),
-       
+        
+        initialRoute: '/',
         routes: <String,WidgetBuilder>{
           //MyHomePage.routName : (context)=> MyHomePage(),
           LandingPage.routName :(context)=> LandingPage(),
@@ -39,8 +40,17 @@ class MyApp extends StatelessWidget {
           UserTypeSelectionPage.routName:(context)=>UserTypeSelectionPage(),
           ProfilePage.routName:(context)=>ProfilePage(),
           UserSignUpPage.routName:(context)=>UserSignUpPage(),
+          //ImageShower.routeName:(context)=>ImageShower(),
         },
 
+        // onGenerateRoute: (settings){
+        //   if(settings.name==ImageShower.routeName){
+        //     return FadeScaleRoute(page: ImageShower());
+        //   }
+        //   else{
+        //     return MaterialPageRoute(builder: (context)=>setting)
+        //   }
+        // },
          home: MyHomePage(),
       ),
     );

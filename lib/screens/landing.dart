@@ -1,6 +1,7 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:naija_makers/data/user_type.dart';
+import 'package:naija_makers/providers/followers.dart';
 import 'package:naija_makers/providers/user.dart';
 import 'package:provider/provider.dart';
 import '../screens/message.dart';
@@ -29,7 +30,17 @@ class _LandingPageState extends State<LandingPage> {
   @override
   Widget build(BuildContext context) {
    // var profile=Provider.of<ProfileProvider>(context);
-    return GestureDetector(
+   return MultiProvider(
+      providers:[
+        ChangeNotifierProxyProvider(create: (BuildContext context) {
+          return FollowersProvider(user:Provider.of<ProfileProvider>(context).user,);
+        }, 
+        update: (_, changedUser, FollowersProvider previous) {
+          previous.updateUser(changedUser);//Provider.of<ProfileProvider>(context,listen: false).user);
+        }),
+      ],
+      
+    child: GestureDetector(
       onTap: (){
          FocusScopeNode currentFocus=FocusScope.of(context);
         if(!currentFocus.hasPrimaryFocus){
@@ -112,7 +123,7 @@ class _LandingPageState extends State<LandingPage> {
 
 
        
-    );
+    ));
   }
 
   Widget setSearchWidget(bool small){
@@ -160,6 +171,6 @@ class _LandingPageState extends State<LandingPage> {
         //fillColor: Colors.white,
       ),
   ))
-    ;
+   ;
   }
 }

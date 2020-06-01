@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:naija_makers/widgets/route/fade_scale_route.dart';
 import 'package:naija_makers/widgets/show_cached_image.dart';
 
 import 'image_shower.dart';
@@ -21,6 +22,7 @@ class OnlineAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('online avatar build');
     return Stack(
       children: <Widget>[
         GestureDetector(
@@ -29,11 +31,16 @@ class OnlineAvatar extends StatelessWidget {
               // ImageShower(
               //   imageLink: imageLink,
               // );
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return ImageShower(imageLink: fullImageLink);
-                  });
+
+              // showDialog(
+              //     context: context,
+              //     builder: (BuildContext context) {
+              //       return ImageShower(imageLink: fullImageLink);
+              //     });
+              Navigator.push(context, FadeScaleRoute(page:  
+               ImageShower(imageLink:fullImageLink,hero:imageLink)),
+             
+  );
             } else {
               print('clicked');
               if (editable) {

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:naija_makers/models/profile.dart';
@@ -11,7 +12,7 @@ import 'package:naija_makers/widgets/online_avatar.dart';
 import 'package:naija_makers/widgets/profile_properties/email_row.dart';
 import 'package:naija_makers/widgets/profile_properties/name_row.dart';
 import 'package:provider/provider.dart';
-import '../widgets/profile_avatar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CustomerProfile extends StatefulWidget {
   static const String routName = '/customer_profile';
@@ -35,7 +36,6 @@ class _CustomerProfileState extends State<CustomerProfile> {
 
   @override
   Widget build(BuildContext context) {
-    final MediaQueryData mediaQueryData = MediaQuery.of(context);
     const double radius = 80;
 
     Profile profile =
@@ -65,9 +65,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
                 height: 20,
               ),
               NameRow(data: profile.name,isEditable: widget.isEditable,editName: editName,),
-          
                Divider(),
-
               Container(
                 height: 20,
               ),
@@ -75,9 +73,44 @@ class _CustomerProfileState extends State<CustomerProfile> {
               Container(
                 height: 20,
               ),
+
+              Container(
+                decoration: BoxDecoration(shape: BoxShape.rectangle,border:Border.all(),borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                padding: EdgeInsets.all(10),
+                child: RichText(text: TextSpan(
+                  style:TextStyle(color: Colors.black,fontSize:15),
+                  children:<TextSpan>[
+                     TextSpan(text: 'Would you love to show your craft and your handy work?\n',),
+                    TextSpan(text: 'You need an account upgrade to'),
+                    TextSpan(text:' maker\'s account. ',style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextSpan(text: ' Click Here ',style: TextStyle(color: Colors.blue,decoration: TextDecoration.underline),
+                    recognizer: TapGestureRecognizer()..onTap=(){
+                      owner.newUserStatus=NewUserStatus.userType;
+                      owner.signOut();
+                    }),
+                    TextSpan(text:'and Follow the instrucions',),
+
+                  ]
+                ),
+                  //textScaleFactor: 0.5,
+                ),
+              ),
+               Container(
+                height: 20,
+              ),
+
+               Text(
+                'Interests',
+                style: Theme.of(context).textTheme.title,
+                textAlign: TextAlign.center,
+               ),
+
+              //ToDo add recnet posts form the people the follows
+
               Container(
                 height: 20,
               ),
+
             ],
           ),
         ),
@@ -104,47 +137,14 @@ class _CustomerProfileState extends State<CustomerProfile> {
             setState(() {
               isLoading = false;
             });
+
             owner.uploadProfilePix(cropped, thumbnail);
           });
         }
       });
     }
   }
-
-  void editCoverPhotoClicked() async {
-    owner.busy = true;
-    int coverSize = 3048000; //2mb setpoint for now
-    File pickedImage = await ImageGetter.getImage(ImageSource.gallery);
-
-    if (pickedImage != null) {
-      int filesize = await pickedImage.length();
-      print(filesize);
-
-      if (filesize > coverSize) {
-        int compression = (((filesize - coverSize) / filesize) * 100).toInt();
-        await ManageImage.resizeImage(image: pickedImage, quality: compression)
-            .then((data) {
-          owner.uploadCoverPhoto(data);
-        });
-      } else {
-        owner.uploadCoverPhoto(pickedImage);
-      }
-    }
-  }
-
-  void editLogoClicked() async {
-    owner.busy = true;
-    print('logo edit clicked');
-    File pickedImage = await ImageGetter.getImage(ImageSource.gallery);
-    if (pickedImage != null) {
-      await CropImage.getCroppedImage(pickedImage).then((image) async {
-        if (image != null) {
-          owner.uploadProfileLogo(image);
-        }
-      });
-    }
-  }
-
+ 
   void editName() {
     print('name Editing');
     owner.updateProfile();
