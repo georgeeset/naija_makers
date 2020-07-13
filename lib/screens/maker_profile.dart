@@ -10,7 +10,7 @@ import 'package:naija_makers/repository/image_getter.dart';
 import 'package:naija_makers/repository/manage_image.dart';
 import 'package:naija_makers/widgets/cover_photo.dart';
 import 'package:naija_makers/widgets/edit_pen.dart';
-import 'package:naija_makers/widgets/image_shower.dart';
+import 'package:naija_makers/screens/image_shower.dart';
 import 'package:naija_makers/widgets/online_avatar.dart';
 import 'package:naija_makers/widgets/profile_properties/email_row.dart';
 import 'package:naija_makers/widgets/profile_properties/name_row.dart';
@@ -23,7 +23,8 @@ import 'package:provider/provider.dart';
 class MakerProfilePage extends StatefulWidget {
   static const routName = '/maker_profile';
   final bool isEditable;
-  MakerProfilePage({this.isEditable = false});
+  final Profile profile;
+  MakerProfilePage({this.isEditable = false, this.profile});
 
   @override
   _MakerProfilePageState createState() => _MakerProfilePageState();
@@ -36,7 +37,7 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
   @override
   void initState() {
     super.initState();
-    owner = Provider.of<ProfileProvider>(context,listen: false);
+    owner = Provider.of<ProfileProvider>(context, listen: false);
   }
 
   @override
@@ -45,8 +46,8 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
     final MediaQueryData mediaQueryData = MediaQuery.of(context);
     const double radius = 80; // determines the positions of the circle avatar
 
-    Profile profile =
-        (ModalRoute.of(context).settings.arguments) ?? owner.userProfile;
+    final Profile profile =
+        widget.isEditable ? owner.userProfile : widget.profile;
 
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
@@ -62,7 +63,7 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
                 width: double.infinity,
                 child: Stack(
                   children: <Widget>[
-                    CoverPhoto(owner.userProfile.coverPhoto),
+                    CoverPhoto(profile.coverPhoto),
                     widget.isEditable
                         ? Positioned(
                             top: 30,
@@ -81,8 +82,9 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
                               radius: radius,
                               ringColor: Theme.of(context).primaryColor,
                               imageLink: profile.profilePixThumb,
-                              fullImageLink:
-                                  profile.profilePix), // size height 190
+                              fullImageLink: profile.profilePix,
+                              heroTag:
+                                  profile.profilePixThumb), // size height 190
                         ],
                       ),
                     )
@@ -93,7 +95,11 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: Column(
                   children: <Widget>[
-                    NameRow(data:profile.name,editName: editName,isEditable:widget.isEditable,),
+                    NameRow(
+                      data: profile.name,
+                      editName: editName,
+                      isEditable: widget.isEditable,
+                    ),
                     // myContainer(),
                     Divider(),
                     Row(
@@ -109,49 +115,52 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
                                 width: mediaQueryData.size.width * .80,
                                 child: Text(
                                   profile.businessName,
-                                  style: Theme.of(context).textTheme.subhead,
+                                  style: Theme.of(context).textTheme.headline6,
                                 ),
                               ),
                             ],
                           ),
                           widget.isEditable
-                          ? IconButton(
-                            icon: const Icon(
-                              Icons.mode_edit,
-                              color: Colors.green,
-                              size: 20,
-                            ),
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return Dialog(
-                                      backgroundColor: Colors.lightGreen[300],
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                      child: Container(
-                                          height:
-                                              mediaQueryData.size.height / 4,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 5),
-                                          child: Center(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                BusinessNameField(
-                                                    editBusinessName,
-                                                    'Business name'),
-                                                //RaisedButton(child:Text('ok'),onPressed:(){Navigator.pop(context);},)
-                                              ],
-                                            ),
-                                          )),
-                                    );
-                                  });
-                            },
-                          )
-                          : Container(),
+                              ? IconButton(
+                                  icon: const Icon(
+                                    Icons.mode_edit,
+                                    color: Colors.green,
+                                    size: 20,
+                                  ),
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return Dialog(
+                                            backgroundColor:
+                                                Colors.lightGreen[300],
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20)),
+                                            child: Container(
+                                                height:
+                                                    mediaQueryData.size.height /
+                                                        4,
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 5),
+                                                child: Center(
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: <Widget>[
+                                                      BusinessNameField(
+                                                          editBusinessName,
+                                                          'Business name'),
+                                                      //RaisedButton(child:Text('ok'),onPressed:(){Navigator.pop(context);},)
+                                                    ],
+                                                  ),
+                                                )),
+                                          );
+                                        });
+                                  },
+                                )
+                              : Container(),
                         ]),
 
                     Divider(),
@@ -169,7 +178,7 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
                                 width: mediaQueryData.size.width * .80,
                                 child: Text(
                                   profile.businessAddress,
-                                  style: Theme.of(context).textTheme.subhead,
+                                  style: Theme.of(context).textTheme.headline6,
                                   softWrap: true,
                                   maxLines: null,
                                 ),
@@ -232,62 +241,73 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
                               ),
                               AnimatedSwitcher(
                                 duration: Duration(milliseconds: 500),
-                                transitionBuilder: (Widget child, Animation<double>animation){
-                                  return ScaleTransition(scale:animation,alignment: Alignment.center,child: child,);
+                                reverseDuration: Duration(milliseconds: 400),
+                                transitionBuilder: (Widget child,
+                                    Animation<double> animation) {
+                                  return ScaleTransition(
+                                    scale: animation,
+                                    alignment: Alignment.center,
+                                    child: child,
+                                  );
                                 },
                                 child: Text(
-                                profile.fullTime ? 'Full time' : 'Part time',
-                                style: Theme.of(context).textTheme.subhead,
-                                key: ValueKey<bool>(profile.fullTime),
+                                  profile.fullTime ? 'Full time' : 'Part time',
+                                  style: Theme.of(context).textTheme.headline6,
+                                  key: ValueKey<bool>(profile.fullTime),
+                                ),
                               ),
-
-                              ),
-                             
                             ],
                           ),
                           widget.isEditable
-                          ? Switch(
-                            value: profile.fullTime,
-                            onChanged: (val) {
-                              profile.fullTime = val;
-                              owner.updateProfile();
-                            },
-                          )
-                          : Container(),
+                              ? Switch(
+                                  value: profile.fullTime,
+                                  onChanged: (val) {
+                                    profile.fullTime = val;
+                                    owner.updateProfile();
+                                  },
+                                )
+                              : Container(),
                         ]),
 
                     Divider(),
 
-                    EmailRow(data:profile.email, editEmail: editEmail,isEditable: widget.isEditable,),
+                    EmailRow(
+                      data: profile.email,
+                      editEmail: editEmail,
+                      isEditable: widget.isEditable,
+                    ),
                     Divider(),
                     myContainer(),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Hero(
-                          tag: profile.businessLogo,
-                          child: GestureDetector(
-                            onTap: () {
-                              if (profile.businessLogo != '' && profile.businessLogo!=null) {
-                                // showDialog(
-                                //     context: context,
-                                //     builder: (BuildContext context) {
-                                //       return ImageShower(
-                                //           imageLink: profile.businessLogo,hero: profile.businessLogo,);
-                                //     });
-                                   Navigator.push(context, FadeScaleRoute(page: ImageShower(hero: profile.businessLogo,imageLink:profile.businessLogo,)));
-
-                              }
-                            },
+                        GestureDetector(
+                          onTap: () {
+                            if (profile.businessLogo != '' &&
+                                profile.businessLogo != null) {
+                              Navigator.push(
+                                  context,
+                                  FadeScaleRoute(
+                                      page: ImageShower(
+                                    hero: profile.businessLogo,
+                                    imageLink: profile.businessLogo,
+                                  )));
+                            }
+                          },
+                          child: Hero(
+                            tag: profile.businessLogo,
                             child: Container(
                               height: 100,
                               width: 100,
                               decoration: BoxDecoration(
-                                image: profile.businessLogo == null
+                                image: profile.businessLogo == null ||
+                                        profile.businessLogo == ''
                                     ? null
                                     : DecorationImage(
-                                        image: CachedNetworkImageProvider(profile.businessLogo,),
-                                            //NetworkImage(profile.businessLogo),
+                                        image: CachedNetworkImageProvider(
+                                          profile.businessLogo,
+                                        ),
+                                        //NetworkImage(profile.businessLogo),
                                         fit: BoxFit.contain,
                                       ),
                                 borderRadius: BorderRadius.all(
@@ -313,7 +333,7 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
                             Text(
                               'Job description',
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.subhead,
+                              style: Theme.of(context).textTheme.headline6,
                             ),
                             SelectableText(
                               profile.description,
@@ -322,41 +342,45 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
                           ],
                         )),
                         widget.isEditable
-                        ?IconButton(
-                          icon: Icon(
-                            Icons.edit,
-                            color: Colors.green,
-                            size: 20.0,
-                          ),
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Dialog(
-                                    backgroundColor: Colors.lightGreen[300],
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20)),
-                                    child: Container(
-                                        height: mediaQueryData.size.height / 4,
-                                        padding:
-                                            EdgeInsets.symmetric(horizontal: 5),
-                                        child: Center(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: <Widget>[
-                                              BusinessInfoField(editDescription,
-                                                  'Job description'),
-                                              //RaisedButton(child:Text('ok'),onPressed:(){Navigator.pop(context);},)
-                                            ],
-                                          ),
-                                        )),
-                                  );
-                                });
-                          },
-                        )
-                        : Container(),
+                            ? IconButton(
+                                icon: Icon(
+                                  Icons.edit,
+                                  color: Colors.green,
+                                  size: 20.0,
+                                ),
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Dialog(
+                                          backgroundColor:
+                                              Colors.lightGreen[300],
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                          child: Container(
+                                              height:
+                                                  mediaQueryData.size.height /
+                                                      4,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 5),
+                                              child: Center(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    BusinessInfoField(
+                                                        editDescription,
+                                                        'Job description'),
+                                                    //RaisedButton(child:Text('ok'),onPressed:(){Navigator.pop(context);},)
+                                                  ],
+                                                ),
+                                              )),
+                                        );
+                                      });
+                                },
+                              )
+                            : Container(),
                       ],
                     ),
                   ],
@@ -364,9 +388,9 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
               ),
               Divider(),
               myContainer(),
-             Text(
+              Text(
                 'Recent Post',
-                style: Theme.of(context).textTheme.title,
+                style: Theme.of(context).textTheme.headline6,
                 textAlign: TextAlign.center,
               ),
             ],
@@ -382,7 +406,7 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
 
   void editProfilePicture() async {
     print('image icon clicked');
-    File pickedImage = await ImageGetter.getImage(ImageSource.camera);
+    File pickedImage = await ImageGetter.getSelfie(ImageSource.camera);
     if (pickedImage != null) {
       print('image is selected');
       setState(() {
@@ -390,7 +414,7 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
         print('setState from editprfilePix');
       });
 
-      await CropImage.getCroppedImage(pickedImage).then((cropped) {
+      await CropImage.getCroppedImage(image: pickedImage).then((cropped) {
         if (cropped != null) {
           print('image is cropped');
           ManageImage.resizeImage(image: cropped, quality: 30)
@@ -410,23 +434,21 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
 
   void editCoverPhotoClicked() async {
     owner.busy = true;
-    int coverSize = 3048000; //2mb setpoint for now
     File pickedImage = await ImageGetter.getImage(ImageSource.gallery);
+    File finalImage =
+        await ManageImage.ratioResizeImage(pickedImage: pickedImage)
+            .catchError((err) {
+      SnackBar snackBar = SnackBar(
+        content: Text('No file selected : $err'),
+        // action: SnackBarAction(label: 'Undo', onPressed: () {
+        // Some code to undo the change.
+        //  },
+        //),
+      );
 
-    if (pickedImage != null) {
-      int filesize = await pickedImage.length();
-      print(filesize);
-
-      if (filesize > coverSize) {
-        int compression = (((filesize - coverSize) / filesize) * 100).toInt();
-        await ManageImage.resizeImage(image: pickedImage, quality: compression)
-            .then((data) {
-          owner.uploadCoverPhoto(data);
-        });
-      } else {
-        owner.uploadCoverPhoto(pickedImage);
-      }
-    }
+      Scaffold.of(context).showSnackBar(snackBar); // notify user of emptyFile
+    });
+    owner.uploadCoverPhoto(finalImage);
   }
 
   void editLogoClicked() async {
@@ -434,7 +456,7 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
     print('logo edit clicked');
     File pickedImage = await ImageGetter.getImage(ImageSource.gallery);
     if (pickedImage != null) {
-      await CropImage.getCroppedImage(pickedImage).then((image) async {
+      await CropImage.getCroppedImage(image: pickedImage).then((image) async {
         if (image != null) {
           owner.uploadProfileLogo(image);
         }

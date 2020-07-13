@@ -3,24 +3,27 @@ import 'package:flutter/material.dart';
 
 class ShowCachedNetworkImage extends StatelessWidget {
   final String imageLink;
-  final double iconsize;
+  final double iconSize;
+  final BoxFit fit;
 
-  ShowCachedNetworkImage({@required this.imageLink, @required this.iconsize});
+  ShowCachedNetworkImage({
+    @required this.imageLink,
+    @required this.iconSize,
+    this.fit = BoxFit.contain,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Hero(
-      tag:imageLink,
-          child: CachedNetworkImage(
-          imageUrl: imageLink,
-          fit: BoxFit.contain,
-          progressIndicatorBuilder: (context, url, downloadProgress) =>
-              Container(width:20,height:20, child: CircularProgressIndicator(value: downloadProgress.progress)),
-          errorWidget: (context, url, error) => Icon(
-                Icons.error_outline,
-                size: iconsize,
-              )
-              ),
-    );
+    return CachedNetworkImage(
+        imageUrl: imageLink,
+        fit: fit,
+        progressIndicatorBuilder: (context, url, downloadProgress) => Container(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(value: downloadProgress.progress)),
+        errorWidget: (context, url, error) => Icon(
+              Icons.error_outline,
+              size: iconSize,
+            ));
   }
 }

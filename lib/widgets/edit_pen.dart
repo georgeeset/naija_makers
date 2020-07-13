@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 class EditPen extends StatelessWidget {
@@ -5,18 +6,18 @@ class EditPen extends StatelessWidget {
   EditPen(this.clickAction);
   @override
   Widget build(BuildContext context) {
-    return Container(
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.edit,
-                      ),
-                      color: Colors.white,
-                      onPressed: () => clickAction(),
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30.0),
-                      color: Colors.black38,
-                    ),
-                  );
+    return Card(
+          child: IconButton(
+            icon: Icon(
+              Icons.edit,
+              color: Colors.white,
+            ),
+            color: Colors.white,
+            onPressed: () => clickAction(),
+          ),
+          color: Colors.black12,
+          shape: CircleBorder(),
+          clipBehavior: Clip.antiAlias,
+    );
   }
 }

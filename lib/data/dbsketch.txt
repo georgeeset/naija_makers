@@ -1,0 +1,272 @@
+
+  Firestore-root
+
+|
+|--- users (collection)
+|     |
+|     |--- uid (documents)
+|          |
+|          |--- name: "User Name"
+|          |
+|          |--- email: "email@email.com"
+|          |--- location
+|
+|
+|--- followers (collection) are following me
+|      |
+|      |
+|      |--- uid (document)
+|              |
+|              |--- followers_count: count
+|              |
+|              |--- userFollowers (collection)
+|              |     |
+|              |     |--- uid (documents)
+|	             |     |		|
+|	             |     |		|---date:dateTime
+|	             |     |		|
+|	             |     |		|---uid:uid of follower
+|              |     |
+|              |     |--- uid (documents) date:dateTime
+|	             |     |		|
+|	             |     |		|---date:dateTime
+|	             |     |		|
+|	             |     |		|---uid:follower uid
+|              |      
+|	             |    
+|	             |	     
+|              |	     
+|              |	     
+|              |--- userFollowing (collection)
+|                 	|
+|                 	|--- uid (documents) 
+|		     	          |		|
+|		     	          |		---date:dateTime
+|		     	          |		|
+|		     	          |		---uid:following uid
+|                 	|
+|                 	|--- uid (documents) date:dateTime
+|		     	          |		|
+|		     	          |		---date:dateTime
+|		     	          |		|
+|		     	          |		---uid:following uid
+|                 	|
+|
+|
+|
+|---notification(collection)
+|		|
+|		|---userUid(document) //include notification info <id and the rest>
+|		|	|
+|		|	|---notifications(collection)
+|				|
+|				|---docId(document)
+|				|	|
+| 				|---type: update/profileUpdate
+|					|
+|					|---postId: post id
+|					|
+|					|---posterId: posterId
+|					|
+|					|---Name:poster name
+|					|
+|					
+|
+|---feed(collection)
+|		|
+|		|---userUid(document)
+|		|	|
+|		|	|---uid: user Uid
+|		|	|
+|		|	|---location: user Location
+|		|	|
+|		|	|---time: updated time on signin
+|		|	|
+|		|	|---feed(collection)
+|			    |
+|				  |---postId(document)
+|				  | 	|
+| 				|	  |---time: time of update
+|					    |
+|					    |---postId: post id
+|					    |
+|					    |---posterId: poster id
+|					    |
+|					    |
+|					    |
+|
+|					
+|
+|--- posts (collection)
+|      |
+|---| uid (documents) //include basic user info like, Geocode name,uid, company name...
+|            |
+|            |
+|            |--- userPosts (collection)
+|            | |
+|            | |--- postId (documents)
+|            | |     |
+|            | |     |--- title: "Post Title"
+|            | |     |
+|            | |     |--- date: September 03, 2018 at 6:16:58 PM UTC+3
+|            | |
+|            | |--- postId (documents)
+|            |       |
+|            |       |--- title: "Post Title"
+|            |       |
+|            |       |--- date: September 03, 2018 at 6:16:58 PM UTC+3
+|
+|
+|
+|
+|
+|---Draft posts (collection) ====Not yet implemnted 
+|      |
+|      |---| uid (documents)
+|            |
+|            |
+|            |
+|            |--- title: "Post Title"
+|            |
+|            |--- date: September 03, 2018 at 6:16:58 PM UTC+3
+|            | 
+|            | 
+|
+
+
+
+
+
+
+
+cloud Functions
+1. update feed in user account on login 
+      or 
+    update all followers feed when update is poseted ==> later in the future
+
+2. send notifications to users when their followee posts.
+
+3. 
+
+
+
+
+
+operation..
+user app searches posts and based on location and add the post info (eg. post id, posterId and time)
+into his own feed document and collection. so that he/she will listen to the feed
+
+
+|--- User Location(collection)
+|		|
+|		---user_uid(document)
+|		| 	|
+|			  --- geopoint: GeoFirePoint
+|			  |
+|			  --- latitude: latitude
+|			  |
+|			  --- longitude: longitude
+|			  |
+|			  --- timestamp: time_stamp
+|
+|--- onlineStatus(collection)
+|		|
+|		---user_uid(document)
+|		|	|
+|			--- status:
+|			|
+|			--- LastUpdated:
+
+
+
+
+
+
+
+13,000 folowers
+
+|
+|---Followers(collection)
+|	|
+|	|--- ownerUid(document)
+|		|
+|		|--- followerUid: Follower name
+|
+|
+|
+|
+|---Followed(collection)
+|	|
+|	|--- followedownerUid(document)
+|		|
+|		|--- followingUid: Follower name
+|		|
+|		|--- followingUid: Follower name
+|
+|
+|
+
+
+tasks:
+location Provider:
+Network status Provider:
+
+followers provider:
+posts provider:
+
+MessageProvider:
+ChatManager:
+
+=> Ekenwa Ejiro Esetevbe. kanu,
+=> Roselin,
+
+
+
+//=======================================================
+
+return StreamBuilder<List<Wishlist>>(
+  stream: wishListStream(userId),
+  builder: (context, snapshot) {
+    if (snapshot.hasData) {
+      List<Wishlist> wishlists = snapshot.data;
+
+      if (wishlists.length > 0) {
+        return new GridView.builder(
+          scrollDirection: Axis.vertical,
+          itemCount: wishlists.length,
+          itemBuilder: (context, index) {
+            Future<Product> product =
+                getProduct(wishlists[index].productId);
+
+            return FutureBuilder(
+              future: product,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  Product product = snapshot.data;
+
+                  // Do something with product
+                } else {
+                  return Container();
+                }
+              },
+            );
+          },
+          gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+          ),
+        );
+      } else {
+        return Text('No products in your wishlist');
+      }
+    }
+
+    if (snapshot.hasError) {
+      print('WishlistPage - ${snapshot.error}');
+      return Center(child: Text('Some error occurred'));
+    }
+
+    return Center(child: CircularProgressIndicator());
+  },
+);
+
+//==================================================================

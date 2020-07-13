@@ -16,7 +16,7 @@ class Profile {
   int likes;
   String description;
   String coverPhoto;
-  UserType userType;
+  UserType userType=UserType.client;
   String profilePixThumb;
 
   Profile({
@@ -53,7 +53,7 @@ class Profile {
     description=snapshot['description']??'',
     coverPhoto=snapshot['cover_photo'],
     userType=UserType.values[snapshot['user_type']],
-    profilePixThumb=snapshot['profile_pix_thumb'] ;
+    profilePixThumb=snapshot['profile_pix_thumb'];
 
     Map<String,dynamic> get toMap=>{
       'name':name,
@@ -71,6 +71,6 @@ class Profile {
       'description':description,
       'cover_photo':coverPhoto,
       'user_type':userType.index,
-      'profile_pix_thumb':profilePixThumb
+      'profile_pix_thumb':profilePixThumb,
     };
 }

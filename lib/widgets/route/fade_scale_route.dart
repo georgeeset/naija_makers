@@ -10,7 +10,7 @@ class FadeScaleRoute extends PageRouteBuilder {
             Animation<double> secondaryAnimation,
           ) =>
               page,
-              transitionDuration:Duration(milliseconds: 600),
+          transitionDuration: Duration(milliseconds: 600),
           transitionsBuilder: (
             BuildContext context,
             Animation<double> animation,
@@ -29,10 +29,8 @@ class FadeScaleRoute extends PageRouteBuilder {
                   curve: Curves.easeInOut,
                 ),
               ),
-              
               child: child,
             ),
-            
           ),
         );
 }

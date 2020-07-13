@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
           //MyHomePage.routName : (context)=> MyHomePage(),
           LandingPage.routName :(context)=> LandingPage(),
           LoginPage.routName :(context) => LoginPage(),
-          UpdatePage.routName:(context) => UpdatePage(),
+          //UpdatePage.routName:(context) => UpdatePage(),
           IntroductionPage.routName:(context)=>IntroductionPage(),
           UserTypeSelectionPage.routName:(context)=>UserTypeSelectionPage(),
           ProfilePage.routName:(context)=>ProfilePage(),

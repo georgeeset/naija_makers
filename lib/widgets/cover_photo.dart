@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:naija_makers/widgets/route/fade_scale_route.dart';
-import 'image_shower.dart';
+import '../screens/image_shower.dart';
 
 class CoverPhoto extends StatelessWidget {
   final String imageUrl;

@@ -31,9 +31,10 @@ class LoginUi extends StatelessWidget {
               ),
               clipper: GreenClip(),
             ),
-            Positioned(
-              top: mediaQueryData.size.height / 4.2,
-              left: (mediaQueryData.size.width/2)-30,
+            Center(
+              // used to be Positioned.....
+              // top: mediaQueryData.size.height / 4.2,
+              // left: (mediaQueryData.size.width / 2) - 30,
               child: Consumer<ProfileProvider>(
                 builder: (context, profileProvider, child) {
                   // return profileProvider.isLoading
@@ -51,13 +52,13 @@ class LoginUi extends StatelessWidget {
                     duration: Duration(milliseconds: 1000),
                     curve: Curves.easeIn,
                     child: Card(
-                            elevation:3.0,
-                            color: Colors.white,
+                        elevation: 3.0,
+                        color: Colors.white,
                         shape: CircleBorder(),
                         clipBehavior: Clip.antiAlias,
                         child: Container(
                           child: CircleAvatar(
-                            radius: profileProvider.isLoading ? 30.0 :0.0,
+                            radius: profileProvider.isLoading ? 30.0 : 0.0,
                             child: CircularProgressIndicator(),
                           ),
                         )),
@@ -89,6 +90,8 @@ class LoginUi extends StatelessWidget {
                                       Text('You can resend code after.. '),
                                       AnimatedSwitcher(
                                         duration: Duration(milliseconds: 400),
+                                        reverseDuration:
+                                            Duration(milliseconds: 400),
                                         switchInCurve: Curves.easeInOutExpo,
                                         switchOutCurve: Curves.elasticInOut,
                                         transitionBuilder: (Widget child,
@@ -121,6 +124,7 @@ class LoginUi extends StatelessWidget {
                         ),
                         AnimatedSwitcher(
                           duration: Duration(milliseconds: 500),
+                          reverseDuration: Duration(milliseconds: 400),
                           switchInCurve: Curves.easeInOutExpo,
                           switchOutCurve: Curves.elasticInOut,
                           transitionBuilder:

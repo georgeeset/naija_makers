@@ -24,16 +24,16 @@ class MailWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
            GestureDetector(
-             onTap: (){
-               Navigator.pushNamed(
-                 context,
-                 ProfilePage.routName,
-                 arguments: ScreenArguments(
-                   title: 'Full Name',
-                   isMaker: true, //or false
-                 )
-               );
-             },
+            //  onTap: (){
+            //    Navigator.pushNamed(
+            //      context,
+            //      ProfilePage.routName,
+            //      arguments: ScreenArguments(
+            //        title: 'Full Name',
+            //        isMaker: true, //or false
+            //      )
+            //    );
+            //  },
                         child: CircleAvatar(
               radius: 40,
               backgroundColor: Colors.black,//Theme.of(context).primaryColor,

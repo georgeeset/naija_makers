@@ -8,7 +8,7 @@ import 'package:image_cropper/image_cropper.dart';
 
 class CropImage{
 
-  static Future <File> getCroppedImage(image)async{
+  static Future <File> getCroppedImage({image})async{
      return await ImageCropper.cropImage(
             sourcePath: image.path,
             aspectRatio: CropAspectRatio(
@@ -25,4 +25,6 @@ class CropImage{
             )
         );
   }
+
+ 
 }

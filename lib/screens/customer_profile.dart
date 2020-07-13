@@ -12,13 +12,13 @@ import 'package:naija_makers/widgets/online_avatar.dart';
 import 'package:naija_makers/widgets/profile_properties/email_row.dart';
 import 'package:naija_makers/widgets/profile_properties/name_row.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class CustomerProfile extends StatefulWidget {
   static const String routName = '/customer_profile';
 
   final bool isEditable;
-  CustomerProfile({this.isEditable = false});
+  final Profile profile;
+  CustomerProfile({this.isEditable = false,this.profile});
 
   @override
   _CustomerProfileState createState() => _CustomerProfileState();
@@ -39,7 +39,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
     const double radius = 80;
 
     Profile profile =
-        (ModalRoute.of(context).settings.arguments) ?? owner.userProfile;
+        widget.isEditable? owner.userProfile : widget.profile;
 
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
@@ -59,8 +59,8 @@ class _CustomerProfileState extends State<CustomerProfile> {
                               radius: radius,
                               ringColor: Theme.of(context).accentColor,
                               imageLink: profile.profilePixThumb,
-                              fullImageLink:
-                                  profile.profilePix),
+                              fullImageLink:profile.profilePix,
+                              heroTag: profile.profilePixThumb,),
               Container(
                 height: 20,
               ),
@@ -74,7 +74,8 @@ class _CustomerProfileState extends State<CustomerProfile> {
                 height: 20,
               ),
 
-              Container(
+              widget.isEditable
+              ?Container(
                 decoration: BoxDecoration(shape: BoxShape.rectangle,border:Border.all(),borderRadius: BorderRadius.all(Radius.circular(10.0))),
                 padding: EdgeInsets.all(10),
                 child: RichText(text: TextSpan(
@@ -94,7 +95,8 @@ class _CustomerProfileState extends State<CustomerProfile> {
                 ),
                   //textScaleFactor: 0.5,
                 ),
-              ),
+              )
+              :Container(),
                Container(
                 height: 20,
               ),
@@ -120,14 +122,14 @@ class _CustomerProfileState extends State<CustomerProfile> {
 
  void editProfilePicture() async {
     print('image icon clicked');
-    File pickedImage = await ImageGetter.getImage(ImageSource.camera);
+    File pickedImage = await ImageGetter.getSelfie(ImageSource.camera);
     if (pickedImage != null) {
       print('image is selected');
       setState(() {
         isLoading = true;
       });
 
-      await CropImage.getCroppedImage(pickedImage).then((cropped) {
+      await CropImage.getCroppedImage(image:pickedImage).then((cropped) {
         if (cropped != null) {
           print('image is cropped');
           ManageImage.resizeImage(image: cropped, quality: 30)

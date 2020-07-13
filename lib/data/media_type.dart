@@ -1,0 +1,1 @@
+enum MediaType { video,image,text} //upload no more than 1 video. and no more than 5 pix

@@ -36,7 +36,6 @@ class _SignupFieldsState extends State<SignupFields> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     profile = Provider.of<ProfileProvider>(context, listen: false);
   }
@@ -113,7 +112,7 @@ class _SignupFieldsState extends State<SignupFields> {
                           'Signup',
                           style: Theme.of(context)
                               .textTheme
-                              .body2
+                              .bodyText1
                               .copyWith(color: Colors.white),
                         )),
                   ),

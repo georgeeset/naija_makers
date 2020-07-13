@@ -1,44 +1,56 @@
-enum MediaType { video, image }
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../data/media_type.dart';
 
 class Post {
-  final String posterName;
-  final String posterUid;
-  final timeStamp;
-  final String mediaUrl;
-  final String messageText;
-  final bgColor; //expected html color symbol
-  final MediaType mediaType;
-  final int likesCount;
+  String posterUid;
+  int timeStamp;
+  String mediaUrl; //  for video only
+  String messageText;
+  int bgColor; //expected color in integer format
+  bool noBgColor = true; //no background color at first
+  MediaType mediaType;
+  int likesCount;
+  String postId;
+  double fontSize;
+  List<String> multiImage = []; //4 slots for images only
 
   Post({
     this.posterUid,
-    this.posterName,
     this.timeStamp,
     this.mediaUrl,
     this.messageText,
     this.bgColor,
-    this.mediaType,
+    this.noBgColor = true,
+    this.mediaType = MediaType.text,
     this.likesCount,
+    this.postId,
+    this.fontSize,
+    this.multiImage,
   });
 
-  Post.fromMap(Map<String, dynamic> snapshot)
-      : posterName = snapshot['poster_name'],
-        posterUid = snapshot['poster_uid'],
-        timeStamp = snapshot['time_stamp'],
-        mediaUrl = snapshot['media_url'],
-        messageText = snapshot['message_text'],
-        bgColor = snapshot['bg_color'],
-        mediaType = MediaType.values[snapshot['media_type']],
-        likesCount = snapshot['likes_count'];
+  Post.fromMap(DocumentSnapshot snapshot)
+      : postId = snapshot.documentID,
+        posterUid = snapshot.data['poster_uid'],
+        timeStamp = snapshot.data['time_stamp'],
+        mediaUrl = snapshot.data['media_url'],
+        messageText = snapshot.data['message_text'],
+        bgColor = snapshot.data['bg_color'],
+        noBgColor = snapshot.data['no_bg_color'],
+        mediaType = MediaType.values[snapshot.data['media_type']],
+        likesCount = snapshot.data['likes_count'],
+        fontSize = snapshot.data['font_size'],
+        multiImage = snapshot.data['multiImages'].cast<String>();
 
   get toMap => {
-        'poster_name': posterName,
         'poster_uid': posterUid,
         'time_stamp': timeStamp,
         'media_url': mediaUrl,
-        'essage_text': messageText,
+        'message_text': messageText,
         'bg_color': bgColor,
+        'no_bg_color': noBgColor,
         'media_type': mediaType.index,
         'likes_count': likesCount,
+        'font_size': fontSize,
+        'multiImages': multiImage,
       };
 }

@@ -277,7 +277,9 @@ class ProfileProvider extends ChangeNotifier {
     notifyListeners();
     await(await _uploadTask.onComplete).ref.getDownloadURL().then((downloadUrl){
       _userProfile.businessLogo=downloadUrl;
+      _uploadTask=null;
       notifyListeners();
+      updateProfile();
     });
   }
 

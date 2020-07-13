@@ -17,5 +17,10 @@ class CloudStorageService {
  Stream <StorageTaskEvent> uploadTask(){
    return _uploadTask.events;
  }
+
+ Future<void> deleteFile(String link)async{
+   StorageReference storageReference =await _storage.getReferenceFromUrl(link);
+   storageReference.delete();
+ }
   
 }

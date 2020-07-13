@@ -23,14 +23,12 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     pageController = PageController(initialPage: 0);
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     pageController.dispose();
   }
@@ -80,10 +78,10 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
      this.setState((){
         _inProcess = true;
       });
-     await ImageGetter.getImage(source)
+     await ImageGetter.getSelfie(source)
      .then((value)async{
         if(value!=null){
-          await CropImage.getCroppedImage(value).then(
+          await CropImage.getCroppedImage(image:value).then(
             (value) {
               if(value!=null){
                 this.setState((){

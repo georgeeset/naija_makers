@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:location/location.dart';
-import '../models/location.dart';
+import 'lib/models/location.dart';
 
 class LocationService {
   UserLocation _currentLocation;
@@ -18,6 +18,10 @@ class LocationService {
           _currentLocation = UserLocation(
             latitude: userLocation.latitude,
             longitude: userLocation.longitude,
+            geoPoint: geo.point(
+                latitude: userLocation.latitude,
+                longitude: userLocation.longitude),
+            timestamp: DateTime.now().millisecondsSinceEpoch,
           );
         } on Exception catch (e) {
           print('Could not get location: ${e.toString()}');
@@ -45,11 +49,12 @@ class LocationService {
             GeoFirePoint myLocation = geo.point(
                 latitude: locationData.latitude,
                 longitude: locationData.longitude);
+
             _locationController.add(UserLocation(
               latitude: locationData.latitude,
               longitude: locationData.longitude,
-              geoPoint: myLocation.geoPoint,
-              geoHash: myLocation.hash,
+              geoPoint: myLocation,
+              timestamp: DateTime.now().millisecondsSinceEpoch,
             ));
           }
         });
