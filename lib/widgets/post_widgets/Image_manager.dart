@@ -19,7 +19,7 @@ class ImageManager extends StatelessWidget {
             return GestureDetector(
               child: MediaThumbnail(
                 image: post.multiImage[index],
-                onClosed: () => post.removeMedia(
+                onClosed: () => post.removeImage(
                   index: index,
                 ),
                 index: index,

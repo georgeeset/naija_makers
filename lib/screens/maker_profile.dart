@@ -14,6 +14,7 @@ import 'package:naija_makers/screens/image_shower.dart';
 import 'package:naija_makers/widgets/online_avatar.dart';
 import 'package:naija_makers/widgets/profile_properties/email_row.dart';
 import 'package:naija_makers/widgets/profile_properties/name_row.dart';
+import 'package:naija_makers/widgets/profile_widgets/more_details.dart';
 import 'package:naija_makers/widgets/route/fade_scale_route.dart';
 import 'package:naija_makers/widgets/signup_widgets/business_address_field.dart';
 import 'package:naija_makers/widgets/signup_widgets/business_info_field.dart';
@@ -389,9 +390,14 @@ class _MakerProfilePageState extends State<MakerProfilePage> {
               Divider(),
               myContainer(),
               Text(
-                'Recent Post',
+                'Recent Posts',
                 style: Theme.of(context).textTheme.headline6,
                 textAlign: TextAlign.center,
+              ),
+              MoreDetails(
+                isEditable: widget.isEditable,
+                profile: profile,
+                isMaker: true,
               ),
             ],
           ),

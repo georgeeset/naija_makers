@@ -4,9 +4,11 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:naija_makers/data/media_type.dart';
 import 'package:naija_makers/models/feed.dart';
 import 'package:naija_makers/models/follower.dart';
 import 'package:naija_makers/models/post.dart';
+import 'package:naija_makers/repository/cloud_storage_service.dart';
 
 import '../constants.dart' as Constants;
 
@@ -172,12 +174,60 @@ class PostsProvider extends ChangeNotifier {
   }
 
   void deletePost(String postId) {
+    //first delete files if user uploaded anyfile<mediatype image and video>
+    ///search all post with postid and get the exact post to delete
+
+    List<Post> targetPost;
+    _postList.forEach((post) {
+      if (post.postId == postId) {
+        targetPost.add(post);
+      }
+    });
+
+    if (targetPost.length != 1) {
+      throw ('Wahala dey, post to delete is ot equals 1...\n cannot delete');
+    }
+
+    if (targetPost[0].mediaType == MediaType.video) {
+      deleteVideo(targetPost[0].mediaUrl);
+    }
+    if (targetPost[0].mediaType == MediaType.image) {
+      deleteImages(targetPost[0].multiImage);
+    }
+
     _firestore
         .collection(Constants.posts)
         .document(user.uid) // canonly delete own post
         .collection(Constants.posts)
         .document(postId)
         .delete();
+
+    _postList.remove(targetPost[0]);
+    notifyListeners();
+  }
+
+  Future<List<Post>> getAllUserPosts(String userId) async {
+    QuerySnapshot ds = await _firestore
+        .collection(Constants.posts)
+        .document(userId)
+        .collection(Constants.posts)
+        .getDocuments();
+    return ds.documents.map((post) => Post.fromMap(post)).toList();
+  }
+
+  void deleteVideo(String link) {
+    //print('is video? $isVideo');
+    CloudStorageService csv = CloudStorageService();
+    print('deleting uploadedFile');
+    // delete the file
+    csv.deleteFile(link);
+  }
+
+  void deleteImages(List<String> images) {
+    CloudStorageService csv = CloudStorageService();
+    print('deleting uploadedFile');
+    // delete the files
+    images.forEach((image) => csv.deleteFile(image));
   }
 
   void editPost(Post post) {

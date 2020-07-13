@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:naija_makers/data/user_type.dart';
 import 'package:naija_makers/providers/posts.dart';
 import 'package:naija_makers/providers/user.dart';
-import 'package:naija_makers/screens/update.dart';
+import 'package:naija_makers/screens/new_post.dart';
 import 'package:provider/provider.dart';
 import 'update_widgets/update_template.dart';
 import './behavior/scroll_behavior.dart';
@@ -64,7 +64,13 @@ class _HomePageState extends State<HomePage> {
                   height: mediaQueryData.size.height,
                   child: Center(
                       child: posts.isalone
-                          ? Text('you are not following anybody')
+                          ? Text(
+                              'you are not following anybody',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline4
+                                  .copyWith(color: Colors.white),
+                            )
                           : CircularProgressIndicator()))
               : RefreshIndicator(
                   onRefresh: () => posts.callRefresh(),
@@ -99,7 +105,7 @@ class _HomePageState extends State<HomePage> {
                     // Navigator.of(context).pushNamed(UpdatePage.routName,arguments: profile.userProfile);
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) =>
-                          UpdatePage(profile: profile.userProfile),
+                          NewPostPage(profile: profile.userProfile),
                     ));
                     //await Provider.of<ProfileProvider>(context, listen: false).signOut();
                   },

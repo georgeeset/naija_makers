@@ -70,41 +70,46 @@ class NewPostProvider extends ChangeNotifier {
     _retryImageUpload(index);
   }
 
-  void removeMedia({int index, bool isVideo = false}) {
+  void removeVideo() {
     //print('is video? $isVideo');
     CloudStorageService csv = CloudStorageService();
-    if (isVideo) {
-      _newMessage.mediaType = MediaType.text; // inform everybody
-      if (videoUploadTask.isComplete) {
-        print('deleting uploadedFile');
-        // delete the file
-        csv.deleteFile(_newMessage.mediaUrl);
-        _newMessage.mediaUrl = null; // remove the file and then remove the link
-      } else {
-        print('cancle uploading file');
-        videoUploadTask.cancel();
-      }
-      _videoFile = null; // empty the file
+
+    _newMessage.mediaType = MediaType.text; // inform everybody
+    if (videoUploadTask.isComplete) {
+      print('deleting uploadedFile');
+      // delete the file
+      csv.deleteFile(_newMessage.mediaUrl);
+      _newMessage.mediaUrl = null; // remove the file and then remove the link
     } else {
-      if (_multiImageUploadTask[index].isSuccessful) {
-        print('deleting uploadedFile');
-        // delete the file
-        csv.deleteFile(_newMessage.multiImage[index]);
-        _newMessage.multiImage
-            .removeAt(index); // remove the file and then remove the link
+      print('cancle uploading file');
+      videoUploadTask.cancel();
+    }
+    _videoFile = null; // empty the file
 
-      } else {
-        print('deleting uploading file');
-        _multiImageUploadTask[index].cancel();
-      }
+    notifyListeners();
+  }
 
-      _multiImage.removeAt(index);
-      _multiImageUploadTask.removeAt(index);
-      if (_multiImage.length == 0) {
-        // sendPost = false;
-        _newMessage.mediaType = MediaType.text;
-        _newMessage.noBgColor = true;
-      }
+  void removeImage({int index}) {
+    CloudStorageService csv = CloudStorageService();
+
+    if (_multiImageUploadTask[index].isSuccessful) {
+      print('deleting uploadedFile');
+      // delete the file
+      csv.deleteFile(_newMessage.multiImage[index]);
+      _newMessage.multiImage
+          .removeAt(index); // remove the file and then remove the link
+
+    } else {
+      print('deleting uploading file');
+      _multiImageUploadTask[index].cancel();
+    }
+
+    _multiImage.removeAt(index);
+    _multiImageUploadTask.removeAt(index);
+    if (_multiImage.length == 0) {
+      // sendPost = false;
+      _newMessage.mediaType = MediaType.text;
+      _newMessage.noBgColor = true;
     }
     notifyListeners();
   }
@@ -348,11 +353,11 @@ class NewPostProvider extends ChangeNotifier {
   void eraseUploadsBeforeYouDie() {
     print('${_newMessage.mediaType}');
     if (_newMessage.mediaType == MediaType.video) {
-      removeMedia(isVideo: true);
+      removeVideo();
     } else {
       if (_newMessage.mediaType == MediaType.image) {
         for (int index = 0; index < multiImage.length; index++) {
-          removeMedia(index: index);
+          removeImage(index: index);
         }
       }
     }

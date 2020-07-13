@@ -4,6 +4,12 @@ A new Flutter project.
 
 ## Getting Started
 
+## Future Upgrades
+=> make post editable. allow users to edit their posts. full refactor is required...
+
+=> 
+
+
 This project is a starting point for a Flutter application.
 
 A few resources to get you started if this is your first Flutter project:

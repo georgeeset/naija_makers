@@ -60,15 +60,27 @@ class UpdateActions extends StatelessWidget {
                     }
                   }),
 
-          post.userId == posterUid
-              ? IconButton(
-                  icon: Icon(
-                    Icons.edit,
-                    size: iconSize,
-                  ),
-                  onPressed: () {},
-                )
-              : Container(),
+          IconButton(
+            icon: Icon(
+              Icons.share,
+              size: iconSize,
+            ),
+            onPressed: () {
+              print('find out how to share post');
+            },
+          )
+
+          // post.userId == posterUid
+          //     ? IconButton(
+          //         icon: Icon(
+          //           Icons.edit,
+          //           size: iconSize,
+          //         ),
+          //         onPressed: () {
+
+          //         },
+          //       )
+          //     : Container(),
         ],
       ),
     );
